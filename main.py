@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import yfinance as yf
 
-from utils.yfinance_data_manager import clean_yfinance_data
+from app.utils.yfinance_data_manager import clean_yfinance_data
 
 app = FastAPI()
 
@@ -30,7 +30,6 @@ async def get_ticker_balance_sheet(ticker: str):
 @clean_yfinance_data
 async def get_ticker_balancesheet(ticker: str):
     return yf.Ticker(ticker).balancesheet
-
 
 ## Cache Time: 3 month | Invalidates: Never
 @app.get("/v1/ticker/{ticker}/basic-info")

@@ -1,0 +1,46 @@
+# Core dependencies
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+yfinance
+python-dotenv
+
+# Data processing
+pandas
+numpy
+
+# Caching
+redis
+
+# Async HTTP clients
+aiohttp
+httpx
+
+# Code quality
+black
+flake8
+isort
+
+# Testing
+pytest
+pytest-cov
+pytest-asyncio
+faker
+
+# Documentation
+mkdocs
+mkdocs-material
+
+# Observability
+prometheus-client
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-prometheus
+
+# Utilities
+python-multipart
+email-validator
+orjson
+ujson
+aiocache
