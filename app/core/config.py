@@ -110,6 +110,8 @@ class Settings(BaseSettings):
         case_sensitive = True
         env_file = ".env"
         env_file_encoding = "utf-8"
+        populate_by_name = True  # This allows both the field name and alias to work
+        use_enum_values = True  # Keep any existing config options
 
 
 @lru_cache

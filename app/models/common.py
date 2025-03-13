@@ -111,7 +111,8 @@ class SortParams(BaseModel):
 
     class Config:
         """Pydantic configuration."""
-        use_enum_values = True
+        populate_by_name = True  # This allows both the field name and alias to work
+        use_enum_values = True  # Keep any existing config options
 
 
 class FilterParams(BaseModel):
@@ -133,7 +134,8 @@ class QueryParams(PaginationParams, SortParams, FilterParams):
 
     class Config:
         """Pydantic configuration."""
-        use_enum_values = True
+        populate_by_name = True  # This allows both the field name and alias to work
+        use_enum_values = True  # Keep any existing config options
 
 
 class Pagination(BaseModel):

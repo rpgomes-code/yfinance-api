@@ -22,6 +22,8 @@ class TradingHours(BaseModel):
         json_encoders = {
             time: lambda v: v.strftime('%H:%M:%S') if v else None
         }
+        populate_by_name = True  # This allows both the field name and alias to work
+        use_enum_values = True  # Keep any existing config options
 
 
 class MarketHours(BaseModel):
@@ -46,7 +48,8 @@ class MarketStatus(BaseModel):
 
     class Config:
         """Pydantic configuration."""
-        use_enum_values = True
+        populate_by_name = True  # This allows both the field name and alias to work
+        use_enum_values = True  # Keep any existing config options
 
 
 class MarketOverview(BaseModel):

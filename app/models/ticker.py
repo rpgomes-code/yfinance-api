@@ -21,12 +21,13 @@ class TickerAction(BaseModel):
     """Model for ticker actions (dividends and splits)."""
 
     date: datetime = Field(..., description="Date of the action")
-    type: ActionType = Field(..., description="Type of action")
+    action_type: ActionType = Field(..., description="Type of action", alias="type")
     value: float = Field(..., description="Value of the action")
 
     class Config:
         """Pydantic configuration."""
-        use_enum_values = True
+        populate_by_name = True  # This allows both the field name and alias to work
+        use_enum_values = True  # Keep any existing config options
 
 
 class HistoricalData(BaseModel):
@@ -75,7 +76,7 @@ class TickerInfo(TickerBasicInfo):
     """Model for detailed ticker information."""
 
     summary: Optional[str] = Field(None, description="Business summary")
-    type: Optional[str] = Field(None, description="Security type")
+    security_type: Optional[str] = Field(None, description="Security type", alias="type")
     isin: Optional[str] = Field(None, description="ISIN code")
     employees: Optional[int] = Field(None, description="Number of employees")
     ceo: Optional[str] = Field(None, description="CEO name")
@@ -126,7 +127,7 @@ class AnalystPriceTarget(BaseModel):
     date: datetime = Field(..., description="Date of the price target")
     firm: Optional[str] = Field(None, description="Name of the firm")
     to_grade: Optional[str] = Field(None, description="New grade")
-    from_grade: Optional[str] = Field(None, description="Previous grade")
+    previous_grade: Optional[str] = Field(None, description="Previous grade", alias="from_grade")
     action: Optional[str] = Field(None, description="Action taken (e.g., 'main', 'up', 'down', 'init')")
     price_target: Optional[float] = Field(None, description="Price target")
 
@@ -187,7 +188,7 @@ class Recommendation(BaseModel):
     date: date = Field(..., description="Date of the recommendation")
     firm: Optional[str] = Field(None, description="Name of the firm")
     to_grade: str = Field(..., description="Recommendation grade")
-    from_grade: Optional[str] = Field(None, description="Previous grade")
+    previous_grade: Optional[str] = Field(None, description="Previous grade", alias="from_grade")
     action: Optional[str] = Field(None, description="Action taken")
 
 
@@ -245,7 +246,7 @@ class NewsItem(BaseModel):
     link: str = Field(..., description="News link")
     publish_date: datetime = Field(..., description="Publish date")
     summary: Optional[str] = Field(None, description="News summary")
-    type: Optional[str] = Field(None, description="News type")
+    news_type: Optional[str] = Field(None, description="News type", alias="type")
     related_tickers: Optional[List[str]] = Field(None, description="Related tickers")
 
 
