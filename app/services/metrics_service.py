@@ -43,7 +43,7 @@ class ServiceMetrics:
 @dataclass
 class APIMetrics:
     """Data class for storing overall API metrics."""
-    start_time: datetime = field(default_factory=datetime.now(timezone.utc))
+    start_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     total_requests: int = 0
     endpoint_metrics: Dict[str, EndpointMetrics] = field(default_factory=dict)
     service_metrics: Dict[str, ServiceMetrics] = field(default_factory=dict)
@@ -80,6 +80,7 @@ class MetricsService:
         """Implement singleton pattern."""
         if cls._instance is None:
             cls._instance = super(MetricsService, cls).__new__(cls)
+            # Initialize _metrics here to ensure it's not None
             cls._metrics = APIMetrics()
         return cls._instance
 
@@ -91,6 +92,9 @@ class MetricsService:
         This method increments the total request counter.
         """
         with cls._lock:
+            # Ensure _metrics is initialized
+            if cls._metrics is None:
+                cls._metrics = APIMetrics()
             cls._metrics.total_requests += 1
 
     @classmethod
@@ -111,6 +115,10 @@ class MetricsService:
             error: Whether the call resulted in an error
         """
         with cls._lock:
+            # Ensure _metrics is initialized
+            if cls._metrics is None:
+                cls._metrics = APIMetrics()
+
             if endpoint_name not in cls._metrics.endpoint_metrics:
                 cls._metrics.endpoint_metrics[endpoint_name] = EndpointMetrics(
                     name=endpoint_name,
@@ -143,6 +151,10 @@ class MetricsService:
             error: Whether the call resulted in an error
         """
         with cls._lock:
+            # Ensure _metrics is initialized
+            if cls._metrics is None:
+                cls._metrics = APIMetrics()
+
             if service_name not in cls._metrics.service_metrics:
                 cls._metrics.service_metrics[service_name] = ServiceMetrics(name=service_name)
 
@@ -162,6 +174,9 @@ class MetricsService:
             endpoint_name: Name of the endpoint
         """
         with cls._lock:
+            # Ensure _metrics is initialized
+            if cls._metrics is None:
+                cls._metrics = APIMetrics()
             cls._metrics.active_endpoints.add(endpoint_name)
 
     @classmethod
@@ -173,6 +188,9 @@ class MetricsService:
             endpoint_name: Name of the endpoint
         """
         with cls._lock:
+            # Ensure _metrics is initialized
+            if cls._metrics is None:
+                cls._metrics = APIMetrics()
             cls._metrics.active_endpoints.discard(endpoint_name)
 
     @classmethod
@@ -184,6 +202,10 @@ class MetricsService:
             Dict: A dictionary containing a summary of API metrics
         """
         with cls._lock:
+            # Ensure _metrics is initialized
+            if cls._metrics is None:
+                cls._metrics = APIMetrics()
+
             # Calculate overall API metrics
             total_calls = sum(m.calls for m in cls._metrics.endpoint_metrics.values())
             total_errors = sum(m.errors for m in cls._metrics.endpoint_metrics.values())
@@ -263,6 +285,10 @@ class MetricsService:
             Optional[Dict]: Metrics for the endpoint, or None if not found
         """
         with cls._lock:
+            # Ensure _metrics is initialized
+            if cls._metrics is None:
+                cls._metrics = APIMetrics()
+
             if endpoint_name not in cls._metrics.endpoint_metrics:
                 return None
 
@@ -289,6 +315,10 @@ class MetricsService:
             List[Dict]: List of endpoint metrics
         """
         with cls._lock:
+            # Ensure _metrics is initialized
+            if cls._metrics is None:
+                cls._metrics = APIMetrics()
+
             return [
                 {
                     "name": metrics.name,

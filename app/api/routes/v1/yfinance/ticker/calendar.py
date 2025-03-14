@@ -18,8 +18,7 @@ router = create_ticker_router()
     cache_duration="1_week",
     attribute_name="calendar"
 )
-async def get_ticker_calendar(
-):
+async def get_ticker_calendar():
     """
     Get calendar events for a ticker.
 

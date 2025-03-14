@@ -5,7 +5,7 @@ YFinance route endpoints, reducing duplication across endpoint modules.
 """
 import functools
 import logging
-from typing import Callable, Optional, TypeVar
+from typing import Callable, Optional, TypeVar, Dict, Any, Union, List
 
 from fastapi import APIRouter, Depends
 
@@ -129,7 +129,7 @@ def ticker_endpoint(
     attribute_name: Optional[str] = None,
     invalidate_at_midnight: bool = True,
     cache_duration: Optional[str] = None,
-    path: Optional[str] = None  # Added this parameter to fix errors
+    path: Optional[str] = None
 ) -> Callable:
     """
     Factory function to create a standard ticker endpoint.
@@ -204,7 +204,7 @@ def ticker_endpoint(
 def market_endpoint(
     cache_duration: str = "30_minutes",
     attribute_name: Optional[str] = None,
-    path: Optional[str] = None  # Added this parameter to fix errors
+    path: Optional[str] = None
 ) -> Callable:
     """
     Factory function to create a standard market endpoint.
@@ -265,7 +265,7 @@ def market_endpoint(
 def search_endpoint(
     cache_duration: str = "30_minutes",
     attribute_name: Optional[str] = None,
-    path: Optional[str] = None  # Added this parameter to fix errors
+    path: Optional[str] = None
 ) -> Callable:
     """
     Factory function to create a standard search endpoint.
@@ -324,7 +324,7 @@ def search_endpoint(
 def sector_endpoint(
     cache_duration: str = "1_week",
     attribute_name: Optional[str] = None,
-    path: Optional[str] = None  # Added this parameter to fix errors
+    path: Optional[str] = None
 ) -> Callable:
     """
     Factory function to create a standard sector endpoint.
@@ -387,7 +387,7 @@ def sector_endpoint(
 def industry_endpoint(
     cache_duration: str = "1_week",
     attribute_name: Optional[str] = None,
-    path: Optional[str] = None  # Added this parameter to fix errors
+    path: Optional[str] = None
 ) -> Callable:
     """
     Factory function to create a standard industry endpoint.

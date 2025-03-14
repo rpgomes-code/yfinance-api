@@ -4,7 +4,7 @@ This module contains response model definitions that wrap
 data models for API responses.
 """
 from datetime import datetime
-from typing import Any, Dict, Generic, List, Optional, TypeVar
+from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
 
 from pydantic import BaseModel, Field
 
@@ -65,7 +65,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
     }
 
 
-# Simplified response type definitions to avoid circular imports
+# Define response types as string literals to avoid circular imports
 TickerActionResponse = Dict[str, Any]
 TickerAnalystPriceTargetsResponse = Dict[str, Any]
 TickerHistoryResponse = Dict[str, Any]
