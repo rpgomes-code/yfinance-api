@@ -127,7 +127,9 @@ def get_cache_decorator(
 
 def ticker_endpoint(
     attribute_name: Optional[str] = None,
-    invalidate_at_midnight: bool = True
+    invalidate_at_midnight: bool = True,
+    cache_duration: Optional[str] = None,
+    path: Optional[str] = None  # Added this parameter to fix errors
 ) -> Callable:
     """
     Factory function to create a standard ticker endpoint.
@@ -135,6 +137,8 @@ def ticker_endpoint(
     Args:
         attribute_name: YFinance attribute name
         invalidate_at_midnight: Whether to invalidate cache at midnight
+        cache_duration: Cache duration string (overrides default based on attribute)
+        path: Endpoint path (ignored but accepted to maintain compatibility)
 
     Returns:
         Callable: Decorator function for endpoint
@@ -146,10 +150,24 @@ def ticker_endpoint(
 
         # Apply caching if attribute name is provided
         if attribute_name:
-            decorated = get_cache_decorator(
-                attribute_name,
-                invalidate_at_midnight
-            )(decorated)
+            if cache_duration:
+                # Use provided cache duration
+                if cache_duration == "30_minutes":
+                    decorated = cache_30_minutes()(decorated)
+                elif cache_duration == "1_day":
+                    decorated = cache_1_day(invalidate_at_midnight=invalidate_at_midnight)(decorated)
+                elif cache_duration == "1_week":
+                    decorated = cache_1_week()(decorated)
+                elif cache_duration == "1_month":
+                    decorated = cache_1_month()(decorated)
+                elif cache_duration == "3_months":
+                    decorated = cache_3_months()(decorated)
+            else:
+                # Use cache duration based on attribute name
+                decorated = get_cache_decorator(
+                    attribute_name,
+                    invalidate_at_midnight
+                )(decorated)
 
         # Apply data cleaning
         decorated = clean_yfinance_data(decorated)
@@ -186,6 +204,7 @@ def ticker_endpoint(
 def market_endpoint(
     cache_duration: str = "30_minutes",
     attribute_name: Optional[str] = None,
+    path: Optional[str] = None  # Added this parameter to fix errors
 ) -> Callable:
     """
     Factory function to create a standard market endpoint.
@@ -193,6 +212,7 @@ def market_endpoint(
     Args:
         cache_duration: Cache duration
         attribute_name: YFinance attribute name
+        path: Endpoint path (ignored but accepted to maintain compatibility)
 
     Returns:
         Callable: Decorator function for endpoint
@@ -245,6 +265,7 @@ def market_endpoint(
 def search_endpoint(
     cache_duration: str = "30_minutes",
     attribute_name: Optional[str] = None,
+    path: Optional[str] = None  # Added this parameter to fix errors
 ) -> Callable:
     """
     Factory function to create a standard search endpoint.
@@ -252,6 +273,7 @@ def search_endpoint(
     Args:
         cache_duration: Cache duration
         attribute_name: YFinance attribute name
+        path: Endpoint path (ignored but accepted to maintain compatibility)
 
     Returns:
         Callable: Decorator function for endpoint
@@ -302,6 +324,7 @@ def search_endpoint(
 def sector_endpoint(
     cache_duration: str = "1_week",
     attribute_name: Optional[str] = None,
+    path: Optional[str] = None  # Added this parameter to fix errors
 ) -> Callable:
     """
     Factory function to create a standard sector endpoint.
@@ -309,6 +332,7 @@ def sector_endpoint(
     Args:
         cache_duration: Cache duration
         attribute_name: YFinance attribute name
+        path: Endpoint path (ignored but accepted to maintain compatibility)
 
     Returns:
         Callable: Decorator function for endpoint
@@ -363,6 +387,7 @@ def sector_endpoint(
 def industry_endpoint(
     cache_duration: str = "1_week",
     attribute_name: Optional[str] = None,
+    path: Optional[str] = None  # Added this parameter to fix errors
 ) -> Callable:
     """
     Factory function to create a standard industry endpoint.
@@ -370,6 +395,7 @@ def industry_endpoint(
     Args:
         cache_duration: Cache duration
         attribute_name: YFinance attribute name
+        path: Endpoint path (ignored but accepted to maintain compatibility)
 
     Returns:
         Callable: Decorator function for endpoint

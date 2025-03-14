@@ -22,6 +22,10 @@ class SectorPerformance(BaseModel):
     five_year: Optional[float] = Field(None, description="5-year performance (%)")
     ten_year: Optional[float] = Field(None, description="10-year performance (%)")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class SectorCompany(BaseModel):
     """Model for a company in a sector."""
@@ -37,6 +41,10 @@ class SectorCompany(BaseModel):
     pe_ratio: Optional[float] = Field(None, description="Price-to-earnings ratio")
     dividend_yield: Optional[float] = Field(None, description="Dividend yield (%)")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class SectorETF(BaseModel):
     """Model for a sector ETF."""
@@ -51,6 +59,10 @@ class SectorETF(BaseModel):
     provider: Optional[str] = Field(None, description="ETF provider")
     ytd_return: Optional[float] = Field(None, description="Year-to-date return (%)")
     one_year_return: Optional[float] = Field(None, description="1-year return (%)")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorFund(BaseModel):
@@ -69,6 +81,10 @@ class SectorFund(BaseModel):
     three_year_return: Optional[float] = Field(None, description="3-year return (%)")
     five_year_return: Optional[float] = Field(None, description="5-year return (%)")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class SectorIndustry(BaseModel):
     """Model for an industry within a sector."""
@@ -81,6 +97,10 @@ class SectorIndustry(BaseModel):
     average_pe: Optional[float] = Field(None, description="Average P/E ratio")
     average_dividend_yield: Optional[float] = Field(None, description="Average dividend yield (%)")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class ResearchReport(BaseModel):
     """Model for a sector research report."""
@@ -92,6 +112,10 @@ class ResearchReport(BaseModel):
     url: Optional[str] = Field(None, description="Report URL")
     tickers: Optional[List[str]] = Field(None, description="Related ticker symbols")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class SectorInfo(BaseModel):
     """Model for basic sector information."""
@@ -99,6 +123,10 @@ class SectorInfo(BaseModel):
     key: str = Field(..., description="Sector key")
     name: str = Field(..., description="Sector name")
     symbol: Optional[str] = Field(None, description="Sector symbol")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorOverview(SectorInfo):
@@ -112,6 +140,10 @@ class SectorOverview(SectorInfo):
     industry_count: Optional[int] = Field(None, description="Number of industries")
     description: Optional[str] = Field(None, description="Sector description")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class SectorDetails(SectorOverview):
     """Model for detailed sector information."""
@@ -121,3 +153,7 @@ class SectorDetails(SectorOverview):
     top_etfs: Optional[List[SectorETF]] = Field(None, description="Top ETFs tracking the sector")
     top_mutual_funds: Optional[List[SectorFund]] = Field(None, description="Top mutual funds in the sector")
     research_reports: Optional[List[ResearchReport]] = Field(None, description="Research reports")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }

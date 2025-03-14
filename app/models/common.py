@@ -52,6 +52,10 @@ class DateRange(BaseModel):
             except (ValueError, AttributeError):
                 raise ValueError(f"Invalid date format: {v}. Use ISO format or YYYY-MM-DD.")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class HistoryParams(DateRange):
     """Model for history data parameters."""
@@ -77,9 +81,10 @@ class HistoryParams(DateRange):
         description="Adjust all OHLC automatically"
     )
 
-    class Config:
-        """Pydantic configuration."""
-        use_enum_values = True
+    model_config = {
+        "use_enum_values": True,
+        "arbitrary_types_allowed": True
+    }
 
 
 class PaginationParams(BaseModel):
@@ -97,6 +102,10 @@ class PaginationParams(BaseModel):
         description="Number of items per page"
     )
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class SortParams(BaseModel):
     """Model for sorting parameters."""
@@ -110,10 +119,11 @@ class SortParams(BaseModel):
         description="Sort order"
     )
 
-    class Config:
-        """Pydantic configuration."""
-        populate_by_name = True  # This allows both the field name and alias to work
-        use_enum_values = True  # Keep any existing config options
+    model_config = {
+        "populate_by_name": True,
+        "use_enum_values": True,
+        "arbitrary_types_allowed": True
+    }
 
 
 class FilterParams(BaseModel):
@@ -124,19 +134,25 @@ class FilterParams(BaseModel):
         description="Column filters as key-value pairs"
     )
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class QueryParams(PaginationParams, SortParams, FilterParams):
     """Model combining pagination, sorting, and filtering parameters."""
 
-    format: ResponseFormat = Field(
+    format_type: ResponseFormat = Field(
         ResponseFormat.DEFAULT,
-        description="Response format"
+        description="Response format",
+        alias="format"
     )
 
-    class Config:
-        """Pydantic configuration."""
-        populate_by_name = True  # This allows both the field name and alias to work
-        use_enum_values = True  # Keep any existing config options
+    model_config = {
+        "populate_by_name": True,
+        "use_enum_values": True,
+        "arbitrary_types_allowed": True
+    }
 
 
 class Pagination(BaseModel):
@@ -149,6 +165,10 @@ class Pagination(BaseModel):
     has_previous: bool = Field(..., description="Whether there is a previous page")
     has_next: bool = Field(..., description="Whether there is a next page")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class MetadataBase(BaseModel):
     """Base model for metadata in responses."""
@@ -157,6 +177,10 @@ class MetadataBase(BaseModel):
         ...,
         description="Timestamp of the response"
     )
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class Metadata(MetadataBase):
@@ -175,6 +199,10 @@ class Metadata(MetadataBase):
         description="Request parameters"
     )
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class PaginatedMetadata(Metadata):
     """Model for metadata in paginated responses."""
@@ -183,6 +211,10 @@ class PaginatedMetadata(Metadata):
         ...,
         description="Pagination information"
     )
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class BaseResponse(BaseModel, Generic[T]):
@@ -194,9 +226,17 @@ class BaseResponse(BaseModel, Generic[T]):
         description="Response metadata"
     )
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class PaginatedResponse(BaseModel, Generic[T]):
     """Model for paginated API responses."""
 
     items: List[T] = Field(..., description="List of items")
     pagination: Pagination = Field(..., description="Pagination information")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }

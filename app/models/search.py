@@ -15,6 +15,11 @@ class SearchResultBase(BaseModel):
     result_type: str = Field(..., description="Result type", alias="type")
     score: Optional[float] = Field(None, description="Relevance score")
 
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
+
 
 class QuoteSearchResult(SearchResultBase):
     """Model for quote search results."""
@@ -28,6 +33,11 @@ class QuoteSearchResult(SearchResultBase):
     industry: Optional[str] = Field(None, description="Industry")
     market: Optional[str] = Field(None, description="Market")
     score: float = Field(..., description="Relevance score")
+
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
 
 
 class NewsSearchResult(SearchResultBase):
@@ -43,6 +53,11 @@ class NewsSearchResult(SearchResultBase):
     score: float = Field(..., description="Relevance score")
     related_symbols: Optional[List[str]] = Field(None, description="Related ticker symbols")
 
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
+
 
 class ListSearchResult(SearchResultBase):
     """Model for list search results."""
@@ -52,6 +67,11 @@ class ListSearchResult(SearchResultBase):
     description: Optional[str] = Field(None, description="List description")
     symbols: List[str] = Field(..., description="Ticker symbols in the list")
     score: float = Field(..., description="Relevance score")
+
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
 
 
 class ResearchReportSearchResult(SearchResultBase):
@@ -66,6 +86,11 @@ class ResearchReportSearchResult(SearchResultBase):
     score: float = Field(..., description="Relevance score")
     symbols: Optional[List[str]] = Field(None, description="Related ticker symbols")
 
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
+
 
 class SearchResult(BaseModel):
     """Model for search results (union of all result types)."""
@@ -76,6 +101,10 @@ class SearchResult(BaseModel):
         ListSearchResult,
         ResearchReportSearchResult
     ] = Field(..., description="Search result")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SearchQuery(BaseModel):
@@ -98,8 +127,12 @@ class SearchQuery(BaseModel):
         description="Result types to include (quotes, news, lists, research)"
     )
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
+    @field_validator('types')
     @classmethod
-    @field_validator('types', check_fields=True)
     def validate_types(cls, v):
         """Validate search result types."""
         valid_types = {'quotes', 'news', 'lists', 'research'}
@@ -116,3 +149,7 @@ class SearchResponse(BaseModel):
     news: Optional[List[NewsSearchResult]] = Field(None, description="News results")
     lists: Optional[List[ListSearchResult]] = Field(None, description="List results")
     research: Optional[List[ResearchReportSearchResult]] = Field(None, description="Research report results")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }

@@ -20,10 +20,11 @@ class TickerAction(BaseModel):
     action_type: ActionType = Field(..., description="Type of action", alias="type")
     value: float = Field(..., description="Value of the action")
 
-    class Config:
-        """Pydantic configuration."""
-        populate_by_name = True  # This allows both the field name and alias to work
-        use_enum_values = True  # Keep any existing config options
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True,
+        "use_enum_values": True
+    }
 
 
 class HistoricalData(BaseModel):
@@ -38,6 +39,10 @@ class HistoricalData(BaseModel):
     dividends: Optional[float] = Field(0, description="Dividends")
     stock_splits: Optional[float] = Field(0, description="Stock splits")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class TickerPrice(BaseModel):
     """Model for basic price information."""
@@ -48,6 +53,10 @@ class TickerPrice(BaseModel):
     percent_change: float = Field(..., description="Percentage price change")
     currency: Optional[str] = Field(None, description="Currency")
     last_updated: Optional[datetime] = Field(None, description="Last updated timestamp")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerBasicInfo(BaseModel):
@@ -66,6 +75,10 @@ class TickerBasicInfo(BaseModel):
     percent_change: Optional[float] = Field(None, description="Percentage price change")
     website: Optional[str] = Field(None, description="Company website")
     logo_url: Optional[str] = Field(None, description="Company logo URL")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerInfo(TickerBasicInfo):
@@ -94,7 +107,6 @@ class TickerInfo(TickerBasicInfo):
     price_to_sales: Optional[float] = Field(None, description="Price-to-sales ratio")
     price_to_book: Optional[float] = Field(None, description="Price-to-book ratio")
     book_value: Optional[float] = Field(None, description="Book value")
-    market_cap: Optional[int] = Field(None, description="Market capitalization")
     enterprise_value: Optional[int] = Field(None, description="Enterprise value")
     profit_margins: Optional[float] = Field(None, description="Profit margins")
     float_shares: Optional[int] = Field(None, description="Float shares")
@@ -116,6 +128,11 @@ class TickerInfo(TickerBasicInfo):
     last_split_factor: Optional[str] = Field(None, description="Last split factor")
     last_split_date: Optional[date] = Field(None, description="Last split date")
 
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
+
 
 class AnalystPriceTarget(BaseModel):
     """Model for analyst price targets."""
@@ -127,6 +144,11 @@ class AnalystPriceTarget(BaseModel):
     action: Optional[str] = Field(None, description="Action taken (e.g., 'main', 'up', 'down', 'init')")
     price_target: Optional[float] = Field(None, description="Price target")
 
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
+
 
 class FinancialMetric(BaseModel):
     """Model for a single financial metric."""
@@ -134,12 +156,20 @@ class FinancialMetric(BaseModel):
     period: str = Field(..., description="Reporting period")
     value: Optional[float] = Field(None, description="Metric value")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class FinancialStatement(BaseModel):
     """Model for financial statements."""
 
     date: date = Field(..., description="Date of the statement")
     items: Dict[str, Optional[float]] = Field(..., description="Financial statement items")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class EarningsData(BaseModel):
@@ -150,6 +180,10 @@ class EarningsData(BaseModel):
     reported_eps: Optional[float] = Field(None, description="Reported EPS")
     surprise: Optional[float] = Field(None, description="Earnings surprise")
     surprise_percent: Optional[float] = Field(None, description="Earnings surprise percent")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class EarningsEstimate(BaseModel):
@@ -164,6 +198,10 @@ class EarningsEstimate(BaseModel):
     number_of_analysts: Optional[int] = Field(None, description="Number of analysts")
     growth: Optional[float] = Field(None, description="Growth estimate")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class RevenueEstimate(BaseModel):
     """Model for revenue estimate."""
@@ -177,6 +215,10 @@ class RevenueEstimate(BaseModel):
     number_of_analysts: Optional[int] = Field(None, description="Number of analysts")
     growth: Optional[float] = Field(None, description="Growth estimate")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class Recommendation(BaseModel):
     """Model for analyst recommendations."""
@@ -187,6 +229,11 @@ class Recommendation(BaseModel):
     previous_grade: Optional[str] = Field(None, description="Previous grade", alias="from_grade")
     action: Optional[str] = Field(None, description="Action taken")
 
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
+
 
 class Holder(BaseModel):
     """Model for a holder (institutional or insider)."""
@@ -196,6 +243,10 @@ class Holder(BaseModel):
     date_reported: Optional[date] = Field(None, description="Date reported")
     percent: Optional[float] = Field(None, description="Percentage of outstanding shares")
     value: Optional[int] = Field(None, description="Value of holding")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class InsiderTransaction(BaseModel):
@@ -208,6 +259,10 @@ class InsiderTransaction(BaseModel):
     value: Optional[int] = Field(None, description="Transaction value")
     date: date = Field(..., description="Transaction date")
     filing_date: Optional[date] = Field(None, description="Filing date")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class OptionQuote(BaseModel):
@@ -225,6 +280,10 @@ class OptionQuote(BaseModel):
     implied_volatility: Optional[float] = Field(None, description="Implied volatility")
     in_the_money: bool = Field(..., description="Whether the option is in the money")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class OptionChain(BaseModel):
     """Model for an option chain."""
@@ -232,6 +291,10 @@ class OptionChain(BaseModel):
     expiration_date: date = Field(..., description="Expiration date")
     calls: List[OptionQuote] = Field(..., description="Call options")
     puts: List[OptionQuote] = Field(..., description="Put options")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class NewsItem(BaseModel):
@@ -245,6 +308,11 @@ class NewsItem(BaseModel):
     news_type: Optional[str] = Field(None, description="News type", alias="type")
     related_tickers: Optional[List[str]] = Field(None, description="Related tickers")
 
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
+
 
 class SustainabilityMetric(BaseModel):
     """Model for sustainability metrics."""
@@ -253,6 +321,10 @@ class SustainabilityMetric(BaseModel):
     score: Optional[float] = Field(None, description="Metric score")
     percentile: Optional[float] = Field(None, description="Percentile rank")
     description: Optional[str] = Field(None, description="Metric description")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class Sustainability(BaseModel):
@@ -267,3 +339,7 @@ class Sustainability(BaseModel):
     peer_group: Optional[str] = Field(None, description="Peer group")
     percentile: Optional[float] = Field(None, description="Percentile rank")
     metrics: Optional[List[SustainabilityMetric]] = Field(None, description="Sustainability metrics")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }

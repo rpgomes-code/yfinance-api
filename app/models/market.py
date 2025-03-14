@@ -15,13 +15,13 @@ class TradingHours(BaseModel):
     open: Optional[time] = Field(None, description="Open time")
     close: Optional[time] = Field(None, description="Close time")
 
-    class Config:
-        """Pydantic configuration."""
-        json_encoders = {
+    model_config = {
+        "json_encoders": {
             time: lambda v: v.strftime('%H:%M:%S') if v else None
-        }
-        populate_by_name = True  # This allows both the field name and alias to work
-        use_enum_values = True  # Keep any existing config options
+        },
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True
+    }
 
 
 class MarketHours(BaseModel):
@@ -30,6 +30,11 @@ class MarketHours(BaseModel):
     regular: TradingHours = Field(..., description="Regular trading hours")
     pre: Optional[TradingHours] = Field(None, description="Pre-market trading hours")
     post: Optional[TradingHours] = Field(None, description="Post-market trading hours")
+
+    model_config = {
+        "arbitrary_types_allowed": True,
+        "populate_by_name": True
+    }
 
 
 class MarketStatus(BaseModel):
@@ -44,10 +49,10 @@ class MarketStatus(BaseModel):
     timezone: Optional[str] = Field(None, description="Market timezone")
     holidays: Optional[List[datetime]] = Field(None, description="Upcoming market holidays")
 
-    class Config:
-        """Pydantic configuration."""
-        populate_by_name = True  # This allows both the field name and alias to work
-        use_enum_values = True  # Keep any existing config options
+    model_config = {
+        "arbitrary_types_allowed": True,
+        "populate_by_name": True
+    }
 
 
 class MarketOverview(BaseModel):
@@ -62,6 +67,11 @@ class MarketOverview(BaseModel):
     gainers: Optional[List[Dict[str, Union[str, float]]]] = Field(None, description="Top gainers")
     losers: Optional[List[Dict[str, Union[str, float]]]] = Field(None, description="Top losers")
 
+    model_config = {
+        "arbitrary_types_allowed": True,
+        "populate_by_name": True
+    }
+
 
 class MarketSummary(BaseModel):
     """Model for market summary information."""
@@ -70,3 +80,8 @@ class MarketSummary(BaseModel):
     name: str = Field(..., description="Market name")
     status: MarketStatus = Field(..., description="Market status")
     overview: Optional[MarketOverview] = Field(None, description="Market overview")
+
+    model_config = {
+        "arbitrary_types_allowed": True,
+        "populate_by_name": True
+    }

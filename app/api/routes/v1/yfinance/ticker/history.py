@@ -91,6 +91,7 @@ async def get_ticker_history(
     if not history.empty:
         # Convert to a list of records
         for date, row in history.iterrows():
+            # Fixed: Don't call the date object, use strftime instead
             data_point = {
                 "date": date.strftime("%Y-%m-%d"),
                 "open": float(row["Open"]) if "Open" in row else None,

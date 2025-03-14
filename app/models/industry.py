@@ -25,6 +25,10 @@ class IndustryInfo(BaseModel):
     sector_key: str = Field(..., description="Parent sector key")
     sector_name: str = Field(..., description="Parent sector name")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class IndustryOverview(IndustryInfo):
     """Model for industry overview information."""
@@ -35,6 +39,10 @@ class IndustryOverview(IndustryInfo):
     average_dividend_yield: Optional[float] = Field(None, description="Average dividend yield (%)")
     company_count: Optional[int] = Field(None, description="Number of companies")
     description: Optional[str] = Field(None, description="Industry description")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryCompany(SectorCompany):
@@ -47,6 +55,10 @@ class IndustryCompany(SectorCompany):
     return_on_equity: Optional[float] = Field(None, description="Return on equity (%)")
     return_on_assets: Optional[float] = Field(None, description="Return on assets (%)")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class IndustryGrowthCompany(IndustryCompany):
     """Model for a growth company in an industry."""
@@ -57,6 +69,10 @@ class IndustryGrowthCompany(IndustryCompany):
     sales_growth_quarterly: Optional[float] = Field(None, description="Quarterly sales growth (%)")
     earnings_growth_quarterly: Optional[float] = Field(None, description="Quarterly earnings growth (%)")
     eps_growth_quarterly: Optional[float] = Field(None, description="Quarterly EPS growth (%)")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryPerformingCompany(IndustryCompany):
@@ -70,6 +86,10 @@ class IndustryPerformingCompany(IndustryCompany):
     alpha: Optional[float] = Field(None, description="Alpha")
     sharpe_ratio: Optional[float] = Field(None, description="Sharpe ratio")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class IndustryDetails(IndustryOverview):
     """Model for detailed industry information."""
@@ -82,6 +102,10 @@ class IndustryDetails(IndustryOverview):
     related_industries: Optional[List[IndustryInfo]] = Field(None, description="Related industries")
     top_etfs: Optional[List[SectorETF]] = Field(None, description="Top ETFs tracking the industry")
     top_mutual_funds: Optional[List[SectorFund]] = Field(None, description="Top mutual funds in the industry")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryComparison(BaseModel):
@@ -98,3 +122,7 @@ class IndustryComparison(BaseModel):
     day_change: Optional[float] = Field(None, description="1-day change (%)")
     ytd_change: Optional[float] = Field(None, description="Year-to-date change (%)")
     one_year_change: Optional[float] = Field(None, description="1-year change (%)")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }

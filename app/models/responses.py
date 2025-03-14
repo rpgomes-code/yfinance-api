@@ -57,9 +57,13 @@ class ErrorResponse(BaseModel):
 
     error: Dict[str, Any] = Field(..., description="Error details")
     timestamp: datetime = Field(
-        default_factory=datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="Error timestamp"
     )
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class DataResponse(BaseModel, Generic[T]):
@@ -68,6 +72,10 @@ class DataResponse(BaseModel, Generic[T]):
     data: T = Field(..., description="Response data")
     metadata: Optional[Metadata] = Field(None, description="Response metadata")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 class ListResponse(BaseModel, Generic[T]):
     """Generic model for list responses."""
@@ -75,9 +83,13 @@ class ListResponse(BaseModel, Generic[T]):
     items: List[T] = Field(..., description="List of items")
     count: int = Field(..., description="Number of items")
     timestamp: datetime = Field(
-        default_factory=datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="Response timestamp"
     )
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class PaginatedResponse(BaseModel, Generic[T]):
@@ -87,182 +99,256 @@ class PaginatedResponse(BaseModel, Generic[T]):
     pagination: Pagination = Field(..., description="Pagination information")
     metadata: Optional[Metadata] = Field(None, description="Response metadata")
 
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
 
 # Ticker response models
 class TickerActionsResponse(ListResponse[TickerAction]):
     """Model for ticker actions response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerAnalystPriceTargetsResponse(ListResponse[AnalystPriceTarget]):
     """Model for ticker analyst price targets response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerHistoryResponse(ListResponse[HistoricalData]):
     """Model for ticker history response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerBalanceSheetResponse(ListResponse[FinancialStatement]):
     """Model for ticker balance sheet response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerCashFlowResponse(ListResponse[FinancialStatement]):
     """Model for ticker cash flow response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerIncomeStatementResponse(ListResponse[FinancialStatement]):
     """Model for ticker income statement response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerEarningsResponse(ListResponse[EarningsData]):
     """Model for ticker earnings response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerHoldersResponse(ListResponse[Holder]):
     """Model for ticker holders response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerInsiderTransactionsResponse(ListResponse[InsiderTransaction]):
     """Model for ticker insider transactions response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerRecommendationsResponse(ListResponse[Recommendation]):
     """Model for ticker recommendations response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerNewsResponse(ListResponse[NewsItem]):
     """Model for ticker news response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerOptionChainsResponse(ListResponse[OptionChain]):
     """Model for ticker option chains response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerInfoResponse(DataResponse[TickerInfo]):
     """Model for ticker info response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerBasicInfoResponse(DataResponse[TickerBasicInfo]):
     """Model for ticker basic info response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerEarningsEstimateResponse(DataResponse[EarningsEstimate]):
     """Model for ticker earnings estimate response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerRevenueEstimateResponse(DataResponse[RevenueEstimate]):
     """Model for ticker revenue estimate response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class TickerSustainabilityResponse(DataResponse[SustainabilityMetric]):
     """Model for ticker sustainability response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 # Market response models
 class MarketStatusResponse(DataResponse[MarketStatus]):
     """Model for market status response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class MarketSummaryResponse(DataResponse[MarketSummary]):
     """Model for market summary response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 # Search response models
 class SearchResultsResponse(DataResponse[SearchResponse]):
     """Model for search results response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 # Sector response models
 class SectorInfoResponse(DataResponse[SectorInfo]):
     """Model for sector info response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorOverviewResponse(DataResponse[SectorOverview]):
     """Model for sector overview response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorDetailsResponse(DataResponse[SectorDetails]):
     """Model for sector details response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorIndustriesResponse(ListResponse[SectorIndustry]):
     """Model for sector industries response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorCompaniesResponse(ListResponse[SectorCompany]):
     """Model for sector companies response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorETFsResponse(ListResponse[SectorETF]):
     """Model for sector ETFs response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorFundsResponse(ListResponse[SectorFund]):
     """Model for sector funds response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class SectorResearchReportsResponse(ListResponse[ResearchReport]):
     """Model for sector research reports response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 # Industry response models
 class IndustryInfoResponse(DataResponse[IndustryInfo]):
     """Model for industry info response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryOverviewResponse(DataResponse[IndustryOverview]):
     """Model for industry overview response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryDetailsResponse(DataResponse[IndustryDetails]):
     """Model for industry details response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryCompaniesResponse(ListResponse[IndustryCompany]):
     """Model for industry companies response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryGrowthCompaniesResponse(ListResponse[IndustryGrowthCompany]):
     """Model for industry growth companies response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryPerformingCompaniesResponse(ListResponse[IndustryPerformingCompany]):
     """Model for industry performing companies' response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 
 class IndustryComparisonResponse(ListResponse[IndustryComparison]):
     """Model for industry comparison response."""
-    pass
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
