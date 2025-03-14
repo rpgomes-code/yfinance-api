@@ -1,7 +1,7 @@
 """Application configuration module using Pydantic settings management."""
 from typing import List, Optional, Union
 from pydantic_settings import BaseSettings
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 from functools import lru_cache
 
 
@@ -78,7 +78,7 @@ class Settings(BaseSettings):
     REDOC_URL: str = "/redoc"
     OPENAPI_URL: str = "/openapi.json"
 
-    @validator("CORS_ORIGINS", pre=True)
+    @field_validator("CORS_ORIGINS", mode="before")
     def assemble_cors_origins(self, v: Union[str, List[str]]) -> List[str]:
         """Parse CORS origins from string to list if needed."""
         if isinstance(v, str) and not v.startswith("["):
@@ -87,7 +87,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError("CORS_ORIGINS should be a comma-separated string or a list")
 
-    @validator("ENVIRONMENT")
+    @field_validator("ENVIRONMENT")
     def validate_environment(self, v: str) -> str:
         """Validate environment string."""
         allowed = {"development", "testing", "staging", "production"}
@@ -95,8 +95,8 @@ class Settings(BaseSettings):
             raise ValueError(f"ENVIRONMENT must be one of: {', '.join(allowed)}")
         return v.lower()
 
-    @validator("LOG_LEVEL")
-    def validate_log_level(cls, v: str) -> str:
+    @field_validator("LOG_LEVEL")
+    def validate_log_level(self, v: str) -> str:
         """Validate log level string."""
         allowed = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
         v = v.upper()
