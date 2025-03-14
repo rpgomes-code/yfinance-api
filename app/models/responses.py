@@ -7,7 +7,6 @@ from datetime import datetime, timezone
 from typing import Any, Dict, Generic, List, Optional, TypeVar
 
 from pydantic import BaseModel, Field
-from pydantic.v1.generics import GenericModel
 
 from app.models.common import Metadata, Pagination
 from app.models.industry import (
@@ -63,14 +62,14 @@ class ErrorResponse(BaseModel):
     )
 
 
-class DataResponse(GenericModel, Generic[T]):
+class DataResponse(BaseModel, Generic[T]):
     """Generic model for data responses."""
 
     data: T = Field(..., description="Response data")
     metadata: Optional[Metadata] = Field(None, description="Response metadata")
 
 
-class ListResponse(GenericModel, Generic[T]):
+class ListResponse(BaseModel, Generic[T]):
     """Generic model for list responses."""
 
     items: List[T] = Field(..., description="List of items")
@@ -81,7 +80,7 @@ class ListResponse(GenericModel, Generic[T]):
     )
 
 
-class PaginatedResponse(GenericModel, Generic[T]):
+class PaginatedResponse(BaseModel, Generic[T]):
     """Generic model for paginated responses."""
 
     items: List[T] = Field(..., description="List of items")

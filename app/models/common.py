@@ -4,10 +4,10 @@ This module contains model definitions for common data structures
 used throughout the API, such as pagination, dates, and base models.
 """
 from datetime import date, datetime
-from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
+from typing import Any, Dict, List, Optional, TypeVar, Union
 
 from pydantic import BaseModel, Field, field_validator
-from pydantic.v1.generics import GenericModel
+from typing import Generic
 
 from app.models.enums import (
     DataInterval,
@@ -185,7 +185,7 @@ class PaginatedMetadata(Metadata):
     )
 
 
-class BaseResponse(GenericModel, Generic[T]):
+class BaseResponse(BaseModel, Generic[T]):
     """Base model for API responses."""
 
     data: T = Field(..., description="Response data")
@@ -195,7 +195,7 @@ class BaseResponse(GenericModel, Generic[T]):
     )
 
 
-class PaginatedResponse(GenericModel, Generic[T]):
+class PaginatedResponse(BaseModel, Generic[T]):
     """Model for paginated API responses."""
 
     items: List[T] = Field(..., description="List of items")
