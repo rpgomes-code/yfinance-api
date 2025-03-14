@@ -1,13 +1,11 @@
 """Search autocomplete endpoint for YFinance API."""
 from typing import List, Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_search_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_search_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_search_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_30_minutes
 
@@ -28,8 +26,7 @@ router = create_search_router()
 @response_formatter()
 async def search_autocomplete(
         search_obj=Depends(get_search_object),
-        limit: int = Query(10, ge=1, le=25, description="Maximum number of results to return"),
-        query_params: QueryParams = Depends(get_query_params)
+        limit: int = Query(10, ge=1, le=25, description="Maximum number of results to return")
 ):
     """
     Get autocomplete suggestions for a search query.
@@ -37,7 +34,6 @@ async def search_autocomplete(
     Args:
         search_obj: YFinance Search object
         limit: Maximum number of results to return
-        query_params: Query parameters
 
     Returns:
         List[Dict[str, Any]]: List of autocomplete suggestions

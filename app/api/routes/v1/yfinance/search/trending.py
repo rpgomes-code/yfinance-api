@@ -1,13 +1,10 @@
 """Search trending endpoint for YFinance API."""
 from typing import List, Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Query
 
 from app.api.routes.v1.yfinance.base import create_search_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_query_params
-from app.models.common import QueryParams
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_day
 from app.services.yfinance_service import YFinanceService
@@ -28,15 +25,13 @@ router = create_search_router()
 @clean_yfinance_data
 @response_formatter()
 async def search_trending(
-        count: int = Query(10, ge=1, le=25, description="Maximum number of results to return"),
-        query_params: QueryParams = Depends(get_query_params)
+        count: int = Query(10, ge=1, le=25, description="Maximum number of results to return")
 ):
     """
     Get trending search topics and symbols.
 
     Args:
         count: Maximum number of results to return
-        query_params: Query parameters
 
     Returns:
         List[Dict[str, Any]]: List of trending searches

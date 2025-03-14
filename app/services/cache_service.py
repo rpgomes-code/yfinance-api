@@ -1,11 +1,10 @@
 """Service for managing application caching."""
 import logging
-from datetime import datetime, timedelta, time
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from datetime import datetime, timedelta, time, timezone
+from typing import Any, Callable, Optional, Tuple
 import redis
 import pickle
 import hashlib
-import inspect
 import asyncio
 from functools import wraps
 
@@ -23,7 +22,7 @@ class CacheService:
     """
 
     _instance = None
-    _redis_client = None
+    redis_client = None
 
     def __new__(cls):
         """Implement singleton pattern."""
@@ -36,7 +35,7 @@ class CacheService:
     def _initialize_redis(cls):
         """Initialize the Redis client."""
         try:
-            cls._redis_client = redis.Redis(
+            cls.redis_client = redis.Redis(
                 host=settings.REDIS_HOST,
                 port=settings.REDIS_PORT,
                 db=settings.REDIS_DB,
@@ -44,11 +43,11 @@ class CacheService:
                 decode_responses=False  # We want binary data for pickle
             )
             # Test connection
-            cls._redis_client.ping()
+            cls.redis_client.ping()
             logger.info("Successfully connected to Redis")
         except redis.ConnectionError as e:
             logger.warning(f"Could not connect to Redis: {str(e)}. Caching will be disabled.")
-            cls._redis_client = None
+            cls.redis_client = None
 
     @classmethod
     def is_available(cls) -> bool:
@@ -58,11 +57,11 @@ class CacheService:
         Returns:
             bool: True if caching is available, False otherwise
         """
-        if cls._redis_client is None:
+        if cls.redis_client is None:
             return False
 
         try:
-            return cls._redis_client.ping()
+            return cls.redis_client.ping()
         except Exception:
             return False
 
@@ -125,13 +124,13 @@ class CacheService:
 
             # Set the value
             if nx:
-                return bool(cls._redis_client.setnx(key, serialized))
+                return bool(cls.redis_client.setnx(key, serialized))
 
-            cls._redis_client.set(key, serialized)
+            cls.redis_client.set(key, serialized)
 
             # Set expiration if specified
             if expire is not None:
-                cls._redis_client.expire(key, expire)
+                cls.redis_client.expire(key, expire)
 
             return True
 
@@ -156,7 +155,7 @@ class CacheService:
 
         try:
             # Get the value
-            value = cls._redis_client.get(key)
+            value = cls.redis_client.get(key)
 
             if value is None:
                 return False, None
@@ -184,7 +183,7 @@ class CacheService:
             return False
 
         try:
-            return bool(cls._redis_client.delete(key))
+            return bool(cls.redis_client.delete(key))
         except Exception as e:
             logger.error(f"Error deleting cache key {key}: {str(e)}")
             return False
@@ -206,13 +205,13 @@ class CacheService:
         try:
             # Get all keys in the namespace
             pattern = f"{settings.CACHE_PREFIX}:{namespace}:*"
-            keys = cls._redis_client.keys(pattern)
+            keys = cls.redis_client.keys(pattern)
 
             if not keys:
                 return 0
 
             # Delete all keys
-            return cls._redis_client.delete(*keys)
+            return cls.redis_client.delete(*keys)
 
         except Exception as e:
             logger.error(f"Error clearing namespace {namespace}: {str(e)}")
@@ -262,7 +261,7 @@ class CacheService:
                 expiration = expire
                 if invalidate_at_midnight:
                     # Calculate seconds until midnight UTC
-                    now = datetime.utcnow()
+                    now = datetime.now(timezone.utc)
                     midnight = datetime.combine(now.date() + timedelta(days=1), time(0, 0))
                     seconds_to_midnight = (midnight - now).total_seconds()
                     expiration = min(expire, int(seconds_to_midnight))
@@ -296,7 +295,7 @@ class CacheService:
                 expiration = expire
                 if invalidate_at_midnight:
                     # Calculate seconds until midnight UTC
-                    now = datetime.utcnow()
+                    now = datetime.now(timezone.utc)
                     midnight = datetime.combine(now.date() + timedelta(days=1), time(0, 0))
                     seconds_to_midnight = (midnight - now).total_seconds()
                     expiration = min(expire, int(seconds_to_midnight))

@@ -4,7 +4,7 @@ This module contains model definitions for sector data structures
 used in the sector endpoints of the API.
 """
 from datetime import date
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 

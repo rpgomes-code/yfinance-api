@@ -1,14 +1,12 @@
 """Market movers endpoint for YFinance API."""
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from enum import Enum
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_market_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_market_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_market_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_day
 from app.services.yfinance_service import YFinanceService
@@ -38,8 +36,7 @@ class MoverType(str, Enum):
 async def get_market_movers(
         market_obj=Depends(get_market_object),
         mover_type: MoverType = Query(MoverType.GAINERS, description="Type of movers to return"),
-        count: int = Query(5, ge=1, le=25, description="Number of movers to return"),
-        query_params: QueryParams = Depends(get_query_params)
+        count: int = Query(5, ge=1, le=25, description="Number of movers to return")
 ):
     """
     Get the top market movers (gainers, losers, or most active).
@@ -48,7 +45,6 @@ async def get_market_movers(
         market_obj: YFinance Market object
         mover_type: Type of movers to return
         count: Number of movers to return
-        query_params: Query parameters
 
     Returns:
         List[Dict[str, Any]]: List of market movers

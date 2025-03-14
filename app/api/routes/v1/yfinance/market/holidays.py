@@ -1,13 +1,11 @@
 """Market holidays endpoint for YFinance API."""
-from typing import List, Dict, Any
+from typing import Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_market_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_market_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_market_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_week
 
@@ -28,8 +26,7 @@ router = create_market_router()
 @response_formatter()
 async def get_market_holidays(
         market_obj=Depends(get_market_object),
-        year: int = Query(None, description="Year to get holidays for (defaults to current year)"),
-        query_params: QueryParams = Depends(get_query_params)
+        year: int = Query(None, description="Year to get holidays for (defaults to current year)")
 ):
     """
     Get the trading holidays for a market.
@@ -37,7 +34,6 @@ async def get_market_holidays(
     Args:
         market_obj: YFinance Market object
         year: Year to get holidays for
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Market holidays information

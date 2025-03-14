@@ -1,13 +1,11 @@
 """Sector breakdown endpoint for YFinance API."""
 from typing import Dict, Any
 
-from fastapi import Path, Depends
-from app.models.responses import DataResponse
+from fastapi import Depends
 
 from app.api.routes.v1.yfinance.base import create_sector_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_sector_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_sector_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_week
 from app.services.yfinance_service import YFinanceService
@@ -28,21 +26,19 @@ router = create_sector_router()
 @clean_yfinance_data
 @response_formatter()
 async def get_sector_breakdown(
-        sector_obj=Depends(get_sector_object),
-        query_params: QueryParams = Depends(get_query_params)
+        sector_obj=Depends(get_sector_object)
 ):
     """
-    Get detailed breakdown of a sector.
+    Get a detailed breakdown of a sector.
 
     Args:
         sector_obj: YFinance Sector object
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Sector breakdown data
     """
     # Create YFinance service
-    yfinance_service = YFinanceService()
+    YFinanceService()
 
     # Get sector basic info
     sector_key = sector_obj.key
@@ -101,7 +97,7 @@ async def get_sector_breakdown(
                 "small_cap_count": small_cap_count
             })
 
-        # Calculate percentage of total for each industry
+        # Calculate the percentage of total for each industry
         if industry_total_market_cap > 0:
             for industry in breakdown["industry_breakdown"]:
                 industry["market_cap_percentage"] = (industry["market_cap"] / industry_total_market_cap) * 100

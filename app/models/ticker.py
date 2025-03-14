@@ -4,16 +4,12 @@ This module contains model definitions for ticker data structures
 used in the ticker endpoints of the API.
 """
 from datetime import date, datetime
-from decimal import Decimal
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 
 from app.models.enums import (
-    ActionType,
-    Currency,
-    Exchange,
-    QuoteType
+    ActionType
 )
 
 

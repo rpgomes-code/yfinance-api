@@ -4,15 +4,13 @@ This module contains functions for automatically discovering and registering
 API endpoint routers.
 """
 import importlib
-import inspect
 import os
 import pkgutil
-import sys
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +54,7 @@ def register_package_routers(router: APIRouter, package) -> None:
         router: Parent router to add child routers to
         package: Package to scan for routers
     """
-    # Get package path
+    # Get a package path
     pkg_path = os.path.dirname(package.__file__)
 
     # Find all Python modules in the package

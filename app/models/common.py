@@ -6,7 +6,7 @@ used throughout the API, such as pagination, dates, and base models.
 from datetime import date, datetime
 from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from pydantic.generics import GenericModel
 
 from app.models.enums import (
@@ -32,8 +32,8 @@ class DateRange(BaseModel):
         description="End date (ISO format or YYYY-MM-DD)"
     )
 
-    @validator('start', 'end', pre=True)
-    def validate_date(cls, v):
+    @field_validator('start', 'end', mode='before')
+    def validate_date(self, v):
         """Validate and convert date strings."""
         if v is None:
             return None

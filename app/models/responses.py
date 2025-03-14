@@ -3,13 +3,13 @@
 This module contains response model definitions that wrap
 data models for API responses.
 """
-from datetime import datetime
-from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
+from datetime import datetime, timezone
+from typing import Any, Dict, Generic, List, Optional, TypeVar
 
 from pydantic import BaseModel, Field
 from pydantic.generics import GenericModel
 
-from app.models.common import Metadata, Pagination, PaginatedMetadata
+from app.models.common import Metadata, Pagination
 from app.models.industry import (
     IndustryComparison,
     IndustryCompany,
@@ -20,7 +20,7 @@ from app.models.industry import (
     IndustryPerformingCompany
 )
 from app.models.market import MarketStatus, MarketSummary
-from app.models.search import SearchResponse, SearchResult
+from app.models.search import SearchResponse
 from app.models.sector import (
     ResearchReport,
     SectorCompany,
@@ -46,8 +46,7 @@ from app.models.ticker import (
     SustainabilityMetric,
     TickerAction,
     TickerBasicInfo,
-    TickerInfo,
-    TickerPrice
+    TickerInfo
 )
 
 # Generic type for list item
@@ -59,7 +58,7 @@ class ErrorResponse(BaseModel):
 
     error: Dict[str, Any] = Field(..., description="Error details")
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=datetime.now(timezone.utc),
         description="Error timestamp"
     )
 
@@ -77,7 +76,7 @@ class ListResponse(GenericModel, Generic[T]):
     items: List[T] = Field(..., description="List of items")
     count: int = Field(..., description="Number of items")
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=datetime.now(timezone.utc),
         description="Response timestamp"
     )
 
@@ -261,7 +260,7 @@ class IndustryGrowthCompaniesResponse(ListResponse[IndustryGrowthCompany]):
 
 
 class IndustryPerformingCompaniesResponse(ListResponse[IndustryPerformingCompany]):
-    """Model for industry performing companies response."""
+    """Model for industry performing companies' response."""
     pass
 
 

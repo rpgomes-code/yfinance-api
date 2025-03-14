@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import os
 from setuptools import setup, find_packages
 
 # Get package version
@@ -11,14 +10,14 @@ with open("app/__init__.py", "r") as f:
     else:
         version = "0.1.0"
 
-# Get long description from README
+# Get a long description from README
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
 # Get requirements
 def get_requirements():
-    with open("requirements.txt", "r") as f:
-        requirements = f.read().splitlines()
+    with open("requirements.txt", "r") as file:
+        requirements = file.read().splitlines()
     return [r for r in requirements if not r.startswith("#") and r.strip()]
 
 setup(

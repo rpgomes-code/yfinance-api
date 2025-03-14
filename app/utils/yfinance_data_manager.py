@@ -6,8 +6,8 @@ returned by YFinance to ensure it is JSON serializable and well-formatted.
 import functools
 import inspect
 import logging
-from datetime import datetime, date
-from typing import Any, Callable, Dict, List, Optional, Union
+from datetime import datetime, date, timezone
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -29,7 +29,7 @@ def clean_yfinance_data(func: Callable) -> Callable:
     Returns:
         Callable: Decorated function
     """
-    metrics_service = MetricsService()
+    MetricsService()
 
     @functools.wraps(func)
     async def async_wrapper(*args, **kwargs):
@@ -52,7 +52,7 @@ def clean_yfinance_data(func: Callable) -> Callable:
             return cleaned_result
 
         except TickerNotFoundError:
-            # Re-raise ticker not found errors
+            # Re-raise ticker didn't find errors
             raise
         except Exception as e:
             # Log the error for debugging
@@ -86,7 +86,7 @@ def clean_yfinance_data(func: Callable) -> Callable:
             return cleaned_result
 
         except TickerNotFoundError:
-            # Re-raise ticker not found errors
+            # Re-raise ticker didn't find errors
             raise
         except Exception as e:
             # Log the error for debugging
@@ -239,7 +239,7 @@ def format_yfinance_response(data: Any, response_format: str = 'default') -> Any
     # Process data to ensure it's JSON serializable
     processed_data = process_yfinance_output(data)
 
-    # Apply formatting based on format type
+    # Apply formatting based on a format type
     if response_format == 'compact':
         return _compact_format(processed_data)
     elif response_format == 'extended':
@@ -286,7 +286,7 @@ def _extended_format(data: Any) -> Any:
             "data": data,
             "metadata": {
                 "count": 0,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         }
 
@@ -295,7 +295,7 @@ def _extended_format(data: Any) -> Any:
             "data": data,
             "metadata": {
                 "count": len(data),
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         }
 
@@ -304,14 +304,14 @@ def _extended_format(data: Any) -> Any:
             "data": data,
             "metadata": {
                 "fields": list(data.keys()),
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         }
 
     return {
         "data": data,
         "metadata": {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "type": type(data).__name__,
         }
     }

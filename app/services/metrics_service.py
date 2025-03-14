@@ -1,14 +1,12 @@
 """Service for tracking API usage metrics."""
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import wraps
-from typing import Callable, Dict, List, Optional, Set, Tuple
+from typing import Callable, Dict, List, Optional, Set
 import threading
 import asyncio
 from dataclasses import dataclass, field
-
-from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +43,7 @@ class ServiceMetrics:
 @dataclass
 class APIMetrics:
     """Data class for storing overall API metrics."""
-    start_time: datetime = field(default_factory=datetime.utcnow)
+    start_time: datetime = field(default_factory=datetime.now(timezone.utc))
     total_requests: int = 0
     endpoint_metrics: Dict[str, EndpointMetrics] = field(default_factory=dict)
     service_metrics: Dict[str, ServiceMetrics] = field(default_factory=dict)
@@ -54,7 +52,7 @@ class APIMetrics:
     @property
     def uptime_seconds(self) -> float:
         """Calculate the API uptime in seconds."""
-        return (datetime.utcnow() - self.start_time).total_seconds()
+        return (datetime.now(timezone.utc) - self.start_time).total_seconds()
 
     @property
     def uptime_formatted(self) -> str:
@@ -124,7 +122,7 @@ class MetricsService:
             metrics.total_response_time += response_time
             metrics.min_response_time = min(metrics.min_response_time, response_time)
             metrics.max_response_time = max(metrics.max_response_time, response_time)
-            metrics.last_called = datetime.utcnow()
+            metrics.last_called = datetime.now(timezone.utc)
 
             if error:
                 metrics.errors += 1
@@ -344,7 +342,7 @@ class MetricsService:
                 try:
                     result = await func(*args, **kwargs)
                     return result
-                except Exception as e:
+                except Exception:
                     error = True
                     raise
                 finally:

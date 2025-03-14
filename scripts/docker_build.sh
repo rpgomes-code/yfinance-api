@@ -76,7 +76,7 @@ fi
 
 # Build the image
 echo "Building image..."
-docker build -t "$IMAGE" $BUILD_ARG .
+docker build -t "$IMAGE" "$BUILD_ARG" .
 
 # Tag as latest if not already
 if [ "$TAG" != "latest" ]; then

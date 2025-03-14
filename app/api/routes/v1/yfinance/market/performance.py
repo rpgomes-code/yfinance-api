@@ -1,13 +1,11 @@
 """Market performance endpoint for YFinance API."""
 from typing import Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import DataResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_market_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_market_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_market_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_day
 from app.services.yfinance_service import YFinanceService
@@ -30,8 +28,7 @@ router = create_market_router()
 async def get_market_performance(
         market_obj=Depends(get_market_object),
         period: str = Query("1mo",
-                            description="Time period for historical data (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)"),
-        query_params: QueryParams = Depends(get_query_params)
+                            description="Time period for historical data (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)")
 ):
     """
     Get the performance metrics for a market.
@@ -39,7 +36,6 @@ async def get_market_performance(
     Args:
         market_obj: YFinance Market object
         period: Time period for historical data
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Market performance metrics

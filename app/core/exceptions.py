@@ -3,7 +3,7 @@
 This module defines custom exceptions and exception handlers for the API.
 """
 import logging
-from typing import Any, Callable, Dict, Optional, Type, Union
+from typing import Dict, Optional
 
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
@@ -132,7 +132,7 @@ class RateLimitExceededError(APIException):
         super().__init__(status_code, detail, error_code, headers)
 
 
-class NotImplementedError(APIException):
+class NotImplementedYetError(APIException):
     """Exception for not implemented features."""
 
     def __init__(

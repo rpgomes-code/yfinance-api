@@ -6,8 +6,6 @@ This script reads endpoint information and generates individual endpoint files
 for the YFinance API, following the granular one-file-per-endpoint structure.
 """
 import argparse
-import os
-import re
 import sys
 import logging
 import json
@@ -208,7 +206,7 @@ def load_endpoints_config(config_path: Path) -> List[Dict[str, Any]]:
     Load endpoints configuration from a JSON file.
 
     Args:
-        config_path: Path to configuration file
+        config_path: Path to a configuration file
 
     Returns:
         List[Dict[str, Any]]: List of endpoint configurations
@@ -284,11 +282,11 @@ def generate_endpoint_file(
     endpoint_type = endpoint["endpoint_type"]
     endpoint_type_info = ENDPOINT_TYPES[endpoint_type]
 
-    # Determine output path
+    # Determine an output path
     endpoint_dir = output_dir / endpoint_type
     output_path = endpoint_dir / f"{endpoint['endpoint']}.py"
 
-    # Check if file already exists
+    # Check if a file already exists
     if output_path.exists() and not force:
         logger.warning(f"File already exists: {output_path}")
         return False
@@ -321,7 +319,7 @@ def generate_endpoint_file(
     # Function name
     function_name = endpoint["endpoint"].replace("-", "_")
 
-    # Get response model
+    # Get a response model
     response_model = endpoint.get("response_model", "Any")
 
     # Get model imports
@@ -377,7 +375,7 @@ def generate_endpoint_file(
         custom_implementation=custom_implementation
     )
 
-    # Write file
+    # Write a file
     if dry_run:
         logger.info(f"Would write file: {output_path}")
     else:

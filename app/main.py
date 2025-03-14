@@ -7,18 +7,15 @@ import logging
 import time
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.core.exceptions import add_exception_handlers
 from app.core.logging import setup_logging
 from app.core.middleware import add_middleware
 from app.core.cache import setup_cache
-from app.api.router import register_routers
 from app.api import api_router
 from app.services.metrics_service import MetricsService
 from app.services.scheduler_service import SchedulerService
@@ -28,14 +25,12 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan():
     """
     Lifespan manager for FastAPI application.
 
     This handles startup and shutdown events for the application.
 
-    Args:
-        app: FastAPI application
     """
     # Startup
     logger.info(f"Starting YFinance API v{settings.API_VERSION}")
@@ -67,7 +62,7 @@ def create_application() -> FastAPI:
         FastAPI: Configured application
     """
     # Create FastAPI application
-    app = FastAPI(
+    setup_app = FastAPI(
         title=settings.API_TITLE,
         description=settings.API_DESCRIPTION,
         version=settings.API_VERSION,
@@ -78,10 +73,10 @@ def create_application() -> FastAPI:
     )
 
     # Add middleware
-    add_middleware(app)
+    add_middleware(setup_app)
 
     # Add CORS middleware
-    app.add_middleware(
+    setup_app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.CORS_ORIGINS,
         allow_credentials=True,
@@ -90,13 +85,13 @@ def create_application() -> FastAPI:
     )
 
     # Add exception handlers
-    add_exception_handlers(app)
+    add_exception_handlers(setup_app)
 
     # Include API router
-    app.include_router(api_router)
+    setup_app.include_router(api_router)
 
     # Add root endpoint
-    @app.get("/", include_in_schema=False)
+    @setup_app.get("/", include_in_schema=False)
     async def root():
         """Root endpoint that returns basic API information."""
         return {
@@ -107,7 +102,7 @@ def create_application() -> FastAPI:
         }
 
     # Add health check endpoint
-    @app.get("/health", include_in_schema=False)
+    @setup_app.get("/health", include_in_schema=False)
     async def health():
         """Health check endpoint for monitoring."""
         return {
@@ -117,7 +112,7 @@ def create_application() -> FastAPI:
         }
 
     # Add metrics endpoint
-    @app.get("/metrics", include_in_schema=False)
+    @setup_app.get("/metrics", include_in_schema=False)
     async def metrics():
         """Metrics endpoint for monitoring."""
         if not settings.METRICS_ENDPOINT_ENABLED:
@@ -129,7 +124,7 @@ def create_application() -> FastAPI:
         metrics_service = MetricsService()
         return metrics_service.get_summary()
 
-    return app
+    return setup_app
 
 # Create the application instance
 app = create_application()

@@ -1,10 +1,9 @@
 """Service for interacting with the yfinance library."""
 import yfinance as yf
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 import logging
 from functools import lru_cache
 
-from app.core.config import settings
 from app.core.exceptions import TickerNotFoundError, YFinanceError
 
 logger = logging.getLogger(__name__)

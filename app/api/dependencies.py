@@ -4,21 +4,18 @@ This module contains dependency functions that can be used in FastAPI routes
 to inject common dependencies like database connections, authentication, etc.
 """
 import logging
-from typing import Callable, Dict, Optional
+from typing import Dict, Optional
 
-from fastapi import Depends, Path, Query, Request, HTTPException, status
+from fastapi import Path, Query, Request, HTTPException, status
 import yfinance as yf
 
 from app.core.config import settings
 from app.core.exceptions import ValidationError, TickerNotFoundError
 from app.models.enums import (
-    DataPeriod,
-    DataInterval,
     ResponseFormat,
     SortOrder
 )
 from app.models.common import (
-    DateRange,
     HistoryParams,
     QueryParams
 )
@@ -93,7 +90,7 @@ async def get_market_object(
         # Validate market format
         validated_market = validate_market(market)
 
-        # Get market object
+        # Get a market object
         return yfinance_service.get_market(validated_market)
     except ValidationError as e:
         logger.warning(f"Invalid market format: {market} - {str(e)}")
@@ -126,7 +123,7 @@ async def get_sector_object(
         # Validate sector format
         validated_sector = validate_sector(sector)
 
-        # Get sector object
+        # Get a sector object
         return yfinance_service.get_sector(validated_sector)
     except ValidationError as e:
         logger.warning(f"Invalid sector format: {sector} - {str(e)}")
@@ -159,7 +156,7 @@ async def get_industry_object(
         # Validate industry format
         validated_industry = validate_industry(industry)
 
-        # Get industry object
+        # Get an industry object
         return yfinance_service.get_industry(validated_industry)
     except ValidationError as e:
         logger.warning(f"Invalid industry format: {industry} - {str(e)}")
@@ -185,14 +182,14 @@ async def get_search_object(
         yf.Search: Search object
 
     Raises:
-        ValidationError: If query is invalid
+        ValidationError: If a query is invalid
         HTTPException: If search fails
     """
     try:
         # Validate search query
         validated_query = validate_search_query(query)
 
-        # Get search object
+        # Get a search object
         return yfinance_service.get_search(validated_query)
     except ValidationError as e:
         logger.warning(f"Invalid search query: {query} - {str(e)}")
@@ -222,7 +219,7 @@ async def get_history_params(
         interval: Data interval
         start: Start date
         end: End date
-        prepost: Include pre and post market data
+        prepost: Include pre- and post-market data
         actions: Include dividends and stock splits
         auto_adjust: Adjust all OHLC automatically
 
@@ -233,7 +230,7 @@ async def get_history_params(
         ValidationError: If parameters are invalid
     """
     try:
-        # Create history params model
+        # Create a history params model
         params = HistoryParams(
             period=period,
             interval=interval,
@@ -245,7 +242,7 @@ async def get_history_params(
         )
 
         # Convert to dictionary
-        params_dict = params.dict(exclude_none=True)
+        params_dict = params.model_dump(exclude_none=True)
 
         # Handle period/start/end logic
         if start or end:
@@ -253,7 +250,7 @@ async def get_history_params(
             if 'period' in params_dict:
                 del params_dict['period']
         elif not period:
-            # If neither period nor start/end is provided, use default period
+            # If neither period nor start/end is provided, use a default period
             params_dict['period'] = '1mo'
 
         return params_dict
@@ -267,7 +264,7 @@ async def get_query_params(
         page_size: int = Query(100, ge=1, le=1000, description="Items per page"),
         sort_by: Optional[str] = Query(None, description="Field to sort by"),
         sort_order: SortOrder = Query(SortOrder.ASC, description="Sort order"),
-        format: ResponseFormat = Query(ResponseFormat.DEFAULT, description="Response format")
+        query_format: ResponseFormat = Query(ResponseFormat.DEFAULT, description="Response format")
 ) -> QueryParams:
     """
     Dependency to get common query parameters.
@@ -277,7 +274,7 @@ async def get_query_params(
         page_size: Items per page
         sort_by: Field to sort by
         sort_order: Sort order
-        format: Response format
+        query_format: Response format
 
     Returns:
         QueryParams: Query parameters model
@@ -287,7 +284,8 @@ async def get_query_params(
         page_size=page_size,
         sort_by=sort_by,
         sort_order=sort_order,
-        format=format
+        format=query_format,
+        filters=None
     )
 
 
@@ -302,7 +300,7 @@ def get_current_user(request: Request) -> Optional[Dict[str, any]]:
         Optional[Dict[str, any]]: User information or None if not authenticated
     """
     # This is a placeholder for authentication
-    # In a real application, you would implement token validation, etc.
+    # In a real application; you would implement token validation, etc.
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         return None

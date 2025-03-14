@@ -1,13 +1,10 @@
 """Search news endpoint for YFinance API."""
 from typing import List, Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_search_router, search_endpoint
-from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_search_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_search_object
 
 # Create router for this endpoint
 router = create_search_router()
@@ -26,8 +23,7 @@ router = create_search_router()
 )
 async def search_news(
         search_obj=Depends(get_search_object),
-        limit: int = Query(10, ge=1, le=50, description="Maximum number of results to return"),
-        query_params: QueryParams = Depends(get_query_params)
+        limit: int = Query(10, ge=1, le=50, description="Maximum number of results to return")
 ):
     """
     Search for news articles matching a query.
@@ -35,12 +31,11 @@ async def search_news(
     Args:
         search_obj: YFinance Search object
         limit: Maximum number of results to return
-        query_params: Query parameters
 
     Returns:
         List[Dict[str, Any]]: List of matching news articles
     """
-    # Get news from search object
+    # Get news from a search object
     news = search_obj.news
 
     # Limit results if needed

@@ -13,7 +13,7 @@ import statistics
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any
+from typing import Dict, List, Tuple, Any
 import random
 
 import aiohttp
@@ -46,7 +46,7 @@ class BenchmarkResult:
             response_times: List[float]
     ):
         """
-        Initialize benchmark result.
+        Initialize a benchmark result.
 
         Args:
             name: Benchmark name
@@ -150,7 +150,7 @@ async def run_benchmark(
     # Flag to indicate benchmark is running
     running = True
 
-    async def make_request(session: aiohttp.ClientSession) -> Tuple[bool, float]:
+    async def make_request(client_session: aiohttp.ClientSession) -> Tuple[bool, float]:
         """Make a request to a random endpoint."""
         nonlocal request_count
 
@@ -159,29 +159,29 @@ async def run_benchmark(
         url = f"{base_url}{endpoint}"
 
         # Make request
-        start_time = time.time()
+        initial_time = time.time()
         try:
-            async with session.get(url, timeout=timeout) as response:
+            async with client_session.get(url, timeout=timeout) as response:
                 await response.text()  # Ensure response is read
-                elapsed = time.time() - start_time
-                return response.status == 200, elapsed
+                time_elapsed = time.time() - initial_time
+                return response.status == 200, time_elapsed
         except Exception as e:
             logger.debug(f"Error requesting {url}: {str(e)}")
-            return False, time.time() - start_time
+            return False, time.time() - initial_time
 
-    async def worker(session: aiohttp.ClientSession, is_warmup: bool = False):
+    async def worker(client_session: aiohttp.ClientSession, is_warmup: bool = False):
         """Worker task to make requests."""
         nonlocal request_count, success_count, fail_count
 
         while running:
             async with semaphore:
-                success, elapsed = await make_request(session)
+                success, time_elapsed = await make_request(client_session)
 
                 if not is_warmup:
                     request_count += 1
                     if success:
                         success_count += 1
-                        response_times.append(elapsed)
+                        response_times.append(time_elapsed)
                     else:
                         fail_count += 1
 
@@ -228,7 +228,7 @@ async def run_benchmark(
     # Calculate actual duration
     actual_duration = time.time() - start_time
 
-    # Create result
+    # Create a result
     result = BenchmarkResult(
         name=name,
         concurrency=concurrency,
@@ -311,7 +311,7 @@ def load_benchmark_config(config_path: Path) -> Dict[str, Any]:
     Load benchmark configuration from a JSON file.
 
     Args:
-        config_path: Path to configuration file
+        config_path: Path to a configuration file
 
     Returns:
         Dict[str, Any]: Benchmark configuration

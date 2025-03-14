@@ -7,9 +7,7 @@ import functools
 import inspect
 import logging
 import time
-from typing import Any, Callable, Dict, List, Optional, Union
-
-from fastapi import Depends, Request, Response
+from typing import Callable, Optional
 
 from app.core.config import settings
 from app.core.exceptions import YFinanceError, TickerNotFoundError
@@ -38,7 +36,7 @@ def response_formatter(
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
-            # Get format from query parameters if provided
+            # Get a format from query parameters if provided
             format_param = kwargs.get('format')
             current_format = format_param if format_param else format_type
 
@@ -67,7 +65,7 @@ def response_formatter(
 
         @functools.wraps(func)
         def sync_wrapper(*args, **kwargs):
-            # Get format from query parameters if provided
+            # Get a format from query parameters if provided
             format_param = kwargs.get('format')
             current_format = format_param if format_param else format_type
 
@@ -116,7 +114,7 @@ def error_handler() -> Callable:
             try:
                 return await func(*args, **kwargs)
             except TickerNotFoundError:
-                # Re-raise ticker not found errors
+                # Re-raise ticker didn't find errors
                 raise
             except YFinanceError:
                 # Re-raise YFinance errors
@@ -133,7 +131,7 @@ def error_handler() -> Callable:
             try:
                 return func(*args, **kwargs)
             except TickerNotFoundError:
-                # Re-raise ticker not found errors
+                # Re-raise ticker didn't find errors
                 raise
             except YFinanceError:
                 # Re-raise YFinance errors
@@ -343,7 +341,7 @@ def endpoint_decorator(
         invalidate_at_midnight: bool = False,
         track_performance: bool = True,
         handle_errors: bool = True,
-        format_response: bool = True,
+        response_format: bool = True,
         format_type: str = 'default',
         add_metadata: bool = False
 ) -> Callable:
@@ -358,7 +356,7 @@ def endpoint_decorator(
         invalidate_at_midnight: Whether to invalidate at midnight UTC
         track_performance: Whether to track performance
         handle_errors: Whether to handle errors
-        format_response: Whether to format response
+        response_format: Whether to format response
         format_type: Response format type (default, compact, extended)
         add_metadata: Whether to add metadata to response
 
@@ -370,7 +368,7 @@ def endpoint_decorator(
         # Apply decorators in reverse order (last applied = first executed)
         decorated = func
 
-        if format_response:
+        if response_format:
             decorated = response_formatter(format_type, add_metadata)(decorated)
 
         if handle_errors:

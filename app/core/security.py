@@ -1,16 +1,15 @@
 """Security utilities for the YFinance API.
 
-This module contains security-related functionality, including:
+This module contains security-related functionality, including
 - API key validation
 - Rate limiting functions
 - Request validation
 """
 import logging
 import secrets
-import time
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional
 
-from fastapi import Depends, HTTPException, Request, Security, status
+from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import APIKeyHeader, APIKeyQuery
 
 from app.core.config import settings
@@ -41,15 +40,15 @@ if settings.METRICS_ENDPOINT_TOKEN:
 
 
 def verify_api_key(
-        api_key_header: Optional[str] = Security(api_key_header),
-        api_key_query: Optional[str] = Security(api_key_query),
+        apikey_header: Optional[str] = Security(api_key_header),
+        apikey_query: Optional[str] = Security(api_key_query),
 ) -> Optional[Dict]:
     """
-    Verify API key from header or query parameter.
+    Verify an API key from header or query parameter.
 
     Args:
-        api_key_header: API key from header
-        api_key_query: API key from query parameter
+        apikey_header: API key from header
+        apikey_query: API key from query parameter
 
     Returns:
         Optional[Dict]: API key information if valid
@@ -62,12 +61,12 @@ def verify_api_key(
         return None
 
     # Get API key from header or query parameter
-    api_key = api_key_header or api_key_query
+    api_key = apikey_header or apikey_query
 
     if not api_key:
         return None
 
-    # Check if API key is valid
+    # Check if an API key is valid
     if api_key not in VALID_API_KEYS:
         logger.warning(f"Invalid API key: {api_key[:5]}...")
         raise HTTPException(
@@ -98,7 +97,7 @@ def require_api_key(scopes: List[str] = None) -> Callable:
     def _require_api_key(
             api_key: Optional[Dict] = Depends(verify_api_key),
     ) -> Dict:
-        # Check if API key is present
+        # Check if an API key is present
         if not api_key:
             logger.warning("Missing API key")
             raise HTTPException(

@@ -3,7 +3,6 @@
 This module contains constants used throughout the application.
 """
 from enum import Enum
-from typing import Dict, List, Set, Tuple
 
 # API version
 API_VERSION = "v1"

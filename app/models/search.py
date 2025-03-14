@@ -4,11 +4,9 @@ This module contains model definitions for search data structures
 used in the search endpoints of the API.
 """
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Optional, Union
 
-from pydantic import BaseModel, Field, validator
-
-from app.models.enums import QuoteType
+from pydantic import BaseModel, Field, field_validator
 
 
 class SearchResultBase(BaseModel):
@@ -100,8 +98,8 @@ class SearchQuery(BaseModel):
         description="Result types to include (quotes, news, lists, research)"
     )
 
-    @validator('types', each_item=True)
-    def validate_types(cls, v):
+    @field_validator('types', check_fields=True)
+    def validate_types(self, v):
         """Validate search result types."""
         valid_types = {'quotes', 'news', 'lists', 'research'}
         if v.lower() not in valid_types:

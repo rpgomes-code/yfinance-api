@@ -1,13 +1,10 @@
 """Service for managing scheduled tasks."""
 import asyncio
 import logging
-import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import threading
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Callable, Dict, List, Optional
 import uuid
-
-from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +49,7 @@ class Task:
         self.retry_delay = retry_delay
         self.on_error = on_error
         self.last_run = None
-        self.next_run = datetime.utcnow() if immediate else datetime.utcnow() + timedelta(seconds=interval)
+        self.next_run = datetime.now(timezone.utc) if immediate else datetime.now(timezone.utc) + timedelta(seconds=interval)
         self.running = False
         self.enabled = True
         self.runs = 0
@@ -70,7 +67,7 @@ class Task:
         return (
                 self.enabled and
                 not self.running and
-                datetime.utcnow() >= self.next_run
+                datetime.now(timezone.utc) >= self.next_run
         )
 
     async def run(self) -> bool:
@@ -85,8 +82,8 @@ class Task:
 
         self.running = True
         self.runs += 1
-        self.last_run = datetime.utcnow()
-        self.next_run = datetime.utcnow() + timedelta(seconds=self.interval)
+        self.last_run = datetime.now(timezone.utc)
+        self.next_run = datetime.now(timezone.utc) + timedelta(seconds=self.interval)
 
         retries = 0
         success = False

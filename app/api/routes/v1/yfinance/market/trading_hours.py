@@ -1,13 +1,11 @@
 """Market trading hours endpoint for YFinance API."""
 from typing import Dict, Any
 
-from fastapi import Path, Depends
-from app.models.responses import DataResponse
+from fastapi import Depends
 
 from app.api.routes.v1.yfinance.base import create_market_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_market_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_market_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_month
 
@@ -27,15 +25,13 @@ router = create_market_router()
 @clean_yfinance_data
 @response_formatter()
 async def get_market_trading_hours(
-        market_obj=Depends(get_market_object),
-        query_params: QueryParams = Depends(get_query_params)
+        market_obj=Depends(get_market_object)
 ):
     """
     Get the trading hours for a market.
 
     Args:
         market_obj: YFinance Market object
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Market trading hours information

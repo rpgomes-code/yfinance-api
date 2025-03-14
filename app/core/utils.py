@@ -7,7 +7,7 @@ import inspect
 import re
 from datetime import datetime, date
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Set, Tuple, Union
 import pandas as pd
 
 from app.core.constants import VALID_PERIODS, VALID_INTERVALS

@@ -24,7 +24,7 @@ class DataPeriod(str, Enum):
 
     @classmethod
     def list(cls) -> List[str]:
-        """Get list of all period values."""
+        """Get a list of all period values."""
         return [e.value for e in cls]
 
 
@@ -47,7 +47,7 @@ class DataInterval(str, Enum):
 
     @classmethod
     def list(cls) -> List[str]:
-        """Get list of all interval values."""
+        """Get a list of all interval values."""
         return [e.value for e in cls]
 
 
@@ -116,7 +116,7 @@ class MarketRegion(str, Enum):
 
     @classmethod
     def list(cls) -> List[str]:
-        """Get list of all market region values."""
+        """Get a list of all market region values."""
         return [e.value for e in cls]
 
 
@@ -165,7 +165,7 @@ class Exchange(str, Enum):
 
     @classmethod
     def list(cls) -> List[str]:
-        """Get list of all exchange values."""
+        """Get a list of all exchange values."""
         return [e.value for e in cls]
 
 
@@ -182,5 +182,5 @@ class QuoteType(str, Enum):
 
     @classmethod
     def list(cls) -> List[str]:
-        """Get list of all quote type values."""
+        """Get a list of all quote type values."""
         return [e.value for e in cls]

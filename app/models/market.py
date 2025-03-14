@@ -8,8 +8,6 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from app.models.enums import MarketRegion
-
 
 class TradingHours(BaseModel):
     """Model for market trading hours."""

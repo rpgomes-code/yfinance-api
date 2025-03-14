@@ -3,9 +3,8 @@
 This module provides decorators and utilities for caching API responses.
 """
 import logging
-from datetime import datetime, timedelta, time
-from functools import wraps
-from typing import Any, Callable, Optional
+from datetime import datetime, timedelta, time, timezone
+from typing import Callable, Optional
 
 import redis
 from app.core.config import settings
@@ -139,7 +138,7 @@ def calculate_seconds_until_midnight() -> int:
     Returns:
         int: Seconds until midnight UTC
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     midnight = datetime.combine(now.date() + timedelta(days=1), time(0, 0))
     return int((midnight - now).total_seconds())
 

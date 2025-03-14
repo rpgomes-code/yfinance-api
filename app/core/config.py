@@ -1,6 +1,5 @@
 """Application configuration module using Pydantic settings management."""
-import os
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Optional, Union
 from pydantic_settings import BaseSettings
 from pydantic import Field, validator
 from functools import lru_cache
@@ -80,7 +79,7 @@ class Settings(BaseSettings):
     OPENAPI_URL: str = "/openapi.json"
 
     @validator("CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+    def assemble_cors_origins(self, v: Union[str, List[str]]) -> List[str]:
         """Parse CORS origins from string to list if needed."""
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
@@ -89,7 +88,7 @@ class Settings(BaseSettings):
         raise ValueError("CORS_ORIGINS should be a comma-separated string or a list")
 
     @validator("ENVIRONMENT")
-    def validate_environment(cls, v: str) -> str:
+    def validate_environment(self, v: str) -> str:
         """Validate environment string."""
         allowed = {"development", "testing", "staging", "production"}
         if v.lower() not in allowed:

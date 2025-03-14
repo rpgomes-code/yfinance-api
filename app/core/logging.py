@@ -7,8 +7,9 @@ import logging.config
 import json
 import sys
 import os
-from datetime import datetime
-from typing import Any, Dict, Optional, Union
+from datetime import datetime, timezone
+from logging import Logger, LoggerAdapter
+from typing import Any, Dict, Union
 
 from app.core.config import settings
 
@@ -35,7 +36,7 @@ class JsonFormatter(logging.Formatter):
             str: JSON formatted log
         """
         log_data = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),
@@ -180,7 +181,7 @@ class LoggerAdapter(logging.LoggerAdapter):
         return msg, kwargs
 
 
-def get_logger(name: str, **context) -> logging.Logger:
+def get_logger(name: str, **context) -> Union[Logger, LoggerAdapter[Union[Union[Logger, LoggerAdapter[Any]], Any]]]:
     """
     Get a logger with context information.
 

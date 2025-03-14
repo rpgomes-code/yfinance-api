@@ -11,7 +11,6 @@ from datetime import datetime, date, timedelta
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
-import numpy as np
 import yfinance as yf
 
 from app.core.constants import (
@@ -224,7 +223,7 @@ def get_history_args(
         interval: Data interval
         start: Start date
         end: End date
-        prepost: Include pre/post market data
+        prepost: Include pre- / post-market data
         actions: Include dividends and splits
         auto_adjust: Auto-adjust prices
         **kwargs: Additional arguments
@@ -235,7 +234,7 @@ def get_history_args(
     # Parse and validate parameters
     period, interval, start, end = parse_period_interval(period, interval, start, end)
 
-    # Build arguments dictionary
+    # Build argument dictionary
     args = {
         "interval": interval,
         "prepost": prepost,
@@ -551,13 +550,13 @@ def parse_date_range(
                 except ValueError:
                     pass
 
-        # Default end date to today if not provided
+        # Default end date to today if isn't provided
         if not end_date:
             end_date = datetime.now().date()
 
         return start_date, end_date
 
-    # If period is provided, calculate start date based on period
+    # If a period is provided, calculate start date based on a period
     if period:
         end_date = datetime.now().date()
 

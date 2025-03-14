@@ -44,3 +44,7 @@ email-validator
 orjson
 ujson
 aiocache
+starlette
+matplotlib
+tqdm
+setuptools

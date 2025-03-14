@@ -91,7 +91,7 @@ if [ $SKIP_TESTS -eq 0 ]; then
   if [ $DRY_RUN -eq 1 ]; then
     echo "[DRY RUN] Would run: $SCRIPT_DIR/run_tests.sh"
   else
-    $SCRIPT_DIR/run_tests.sh
+    "$SCRIPT_DIR"/run_tests.sh
   fi
 fi
 
@@ -101,7 +101,7 @@ if [ $SKIP_BUILD -eq 0 ]; then
   if [ $DRY_RUN -eq 1 ]; then
     echo "[DRY RUN] Would run: $SCRIPT_DIR/docker_build.sh --tag $IMAGE_TAG"
   else
-    $SCRIPT_DIR/docker_build.sh --tag $IMAGE_TAG
+    "$SCRIPT_DIR"/docker_build.sh --tag "$IMAGE_TAG"
   fi
 fi
 
@@ -133,7 +133,7 @@ echo "Waiting for deployment to complete..."
 if [ $DRY_RUN -eq 1 ]; then
   echo "[DRY RUN] Would wait for deployment: kubectl rollout status deployment/yfinance-api -n $ENVIRONMENT"
 else
-  kubectl rollout status deployment/yfinance-api -n $ENVIRONMENT
+  kubectl rollout status deployment/yfinance-api -n "$ENVIRONMENT"
 fi
 
 # Step 6: Run post-deployment checks
@@ -151,7 +151,7 @@ else
       break
     fi
 
-    if [ $i -eq 10 ]; then
+    if [ "$i" -eq 10 ]; then
       echo "Error: API health check failed after 10 attempts"
       exit 1
     fi

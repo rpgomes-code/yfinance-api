@@ -12,7 +12,7 @@ import logging
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any
+from typing import Dict, List, Tuple, Any
 
 import aiohttp
 from tqdm import tqdm
@@ -113,7 +113,7 @@ def load_warmup_config(config_path: Path) -> Dict[str, Any]:
     Load warmup configuration from a JSON file.
 
     Args:
-        config_path: Path to configuration file
+        config_path: Path to a configuration file
 
     Returns:
         Dict[str, Any]: Warmup configuration

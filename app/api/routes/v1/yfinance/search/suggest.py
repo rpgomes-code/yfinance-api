@@ -1,14 +1,12 @@
 """Search suggest endpoint for YFinance API."""
-from typing import List, Dict, Any
+from typing import Dict, Any
 import re
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_search_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_search_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_search_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_day
 from app.services.yfinance_service import YFinanceService
@@ -30,8 +28,7 @@ router = create_search_router()
 @response_formatter()
 async def search_suggest(
         search_obj=Depends(get_search_object),
-        limit: int = Query(5, ge=1, le=20, description="Maximum number of results per category"),
-        query_params: QueryParams = Depends(get_query_params)
+        limit: int = Query(5, ge=1, le=20, description="Maximum number of results per category")
 ):
     """
     Get personalized search suggestions.
@@ -39,7 +36,6 @@ async def search_suggest(
     Args:
         search_obj: YFinance Search object
         limit: Maximum number of results per category
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Search suggestions in multiple categories
@@ -48,7 +44,7 @@ async def search_suggest(
     # This is different from autocomplete as it provides more context and categorization
 
     # Create YFinance service
-    yfinance_service = YFinanceService()
+    YFinanceService()
 
     # Get search results
     quotes = search_obj.quotes or []
@@ -99,7 +95,7 @@ async def search_suggest(
     modifiers = ["stock", "price", "news", "earnings", "dividend", "forecast", "analysis"]
     related = []
 
-    # If query is a symbol, suggest common lookups
+    # If a query is a symbol, suggest common lookups
     if re.match(r'^[A-Za-z]{1,5}$', query_str):
         for modifier in modifiers:
             if len(related) < limit:

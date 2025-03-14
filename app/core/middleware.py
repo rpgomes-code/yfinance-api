@@ -10,11 +10,11 @@ This module contains middleware for request processing, including
 import logging
 import time
 import uuid
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Any, Optional
 
 from fastapi import FastAPI, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.types import ASGIApp, Receive, Scope, Send
+from starlette.types import ASGIApp
 
 from app.core.config import settings
 from app.core.exceptions import RateLimitExceededError
@@ -139,6 +139,31 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             raise
 
 
+def _should_skip_rate_limit(request: Request) -> bool:
+    """
+    Check if rate limiting should be skipped for this request.
+
+    Args:
+        request: The HTTP request
+
+    Returns:
+        bool: True if rate limiting should be skipped
+    """
+    # Skip rate limiting for documentation endpoints
+    if request.url.path in ["/docs", "/redoc", "/openapi.json"]:
+        return True
+
+    # Skip rate limiting for static files
+    if request.url.path.startswith("/static/"):
+        return True
+
+    # Skip rate limiting for health checks
+    if request.url.path in ["/health", "/ping"]:
+        return True
+
+    return False
+
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """
     Middleware for rate limiting requests.
@@ -184,7 +209,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         # Skip rate limiting for excluded paths
-        if self._should_skip_rate_limit(request):
+        if _should_skip_rate_limit(request):
             return await call_next(request)
 
         # Get client IP
@@ -231,30 +256,6 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         response.headers["X-RateLimit-Reset"] = str(await self._get_rate_limit_reset_time(rate_limit_key))
 
         return response
-
-    def _should_skip_rate_limit(self, request: Request) -> bool:
-        """
-        Check if rate limiting should be skipped for this request.
-
-        Args:
-            request: The HTTP request
-
-        Returns:
-            bool: True if rate limiting should be skipped
-        """
-        # Skip rate limiting for documentation endpoints
-        if request.url.path in ["/docs", "/redoc", "/openapi.json"]:
-            return True
-
-        # Skip rate limiting for static files
-        if request.url.path.startswith("/static/"):
-            return True
-
-        # Skip rate limiting for health checks
-        if request.url.path in ["/health", "/ping"]:
-            return True
-
-        return False
 
     async def _get_rate_limit_counter(self, key: str) -> int:
         """
@@ -316,19 +317,37 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             int: Seconds until reset
         """
         if not self.cache_service.is_available():
-            # If Redis is not available, use default period
+            # If Redis is not available, use a default period
             return self.period
 
-        client = self.cache_service._redis_client
+        client = self.cache_service.redis_client
 
         # Get TTL of the key
         ttl = client.ttl(key)
 
-        # If key doesn't exist or has no expiration, use default period
+        # If key doesn't exist or has no expiration, use a default period
         if ttl < 0:
             return self.period
 
         return ttl
+
+
+def _parse_endpoint_name(request: Request) -> str:
+    """
+    Parse the endpoint name from the request.
+
+    Args:
+        request: The HTTP request
+
+    Returns:
+        str: The endpoint name
+    """
+    # Get a route path if available
+    if hasattr(request, "scope") and "route" in request.scope and hasattr(request.scope["route"], "path"):
+        return request.scope["route"].path
+
+    # Otherwise use URL path
+    return request.url.path
 
 
 class PerformanceMiddleware(BaseHTTPMiddleware):
@@ -338,7 +357,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
     This middleware records performance metrics for each request.
     """
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable) -> Optional[Any]:
         """
         Process request to track performance.
 
@@ -359,7 +378,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
 
         # Parse endpoint name
-        endpoint_name = self._parse_endpoint_name(request)
+        endpoint_name = _parse_endpoint_name(request)
 
         # Set endpoint as active
         metrics_service.set_endpoint_active(endpoint_name)
@@ -387,23 +406,6 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             metrics_service.set_endpoint_inactive(endpoint_name)
 
         return response
-
-    def _parse_endpoint_name(self, request: Request) -> str:
-        """
-        Parse the endpoint name from the request.
-
-        Args:
-            request: The HTTP request
-
-        Returns:
-            str: The endpoint name
-        """
-        # Get route path if available
-        if hasattr(request, "scope") and "route" in request.scope and hasattr(request.scope["route"], "path"):
-            return request.scope["route"].path
-
-        # Otherwise use URL path
-        return request.url.path
 
 
 def add_middleware(app: FastAPI) -> None:

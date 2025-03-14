@@ -5,11 +5,10 @@ to ensure they meet the requirements of the YFinance library.
 """
 import logging
 import re
-from datetime import datetime, date
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from datetime import datetime
+from typing import Any, Dict, Optional
 
-from fastapi import Path, Query, HTTPException, status
-from pydantic import BaseModel, validator, Field
+from fastapi import Path, Query
 
 from app.core.constants import (
     VALID_PERIODS,
@@ -77,11 +76,11 @@ def validate_market(market: str) -> str:
     # Strip whitespace and convert to uppercase
     market = market.strip().upper()
 
-    # Check if market is empty
+    # Check if the market is empty
     if not market:
         raise ValidationError("Market identifier cannot be empty")
 
-    # Check if market is valid
+    # Check if the market is valid
     if market not in VALID_MARKETS:
         raise ValidationError(
             f"Invalid market: {market}. "
@@ -107,7 +106,7 @@ def validate_sector(sector: str) -> str:
     # Strip whitespace and convert to lowercase
     sector = sector.strip().lower()
 
-    # Check if sector is empty
+    # Check if the sector is empty
     if not sector:
         raise ValidationError("Sector identifier cannot be empty")
 
@@ -139,7 +138,7 @@ def validate_industry(industry: str) -> str:
     # Strip whitespace and convert to lowercase
     industry = industry.strip().lower()
 
-    # Check if industry is empty
+    # Check if the industry is empty
     if not industry:
         raise ValidationError("Industry identifier cannot be empty")
 
@@ -171,11 +170,11 @@ def validate_period(period: str) -> str:
     # Strip whitespace and convert to lowercase
     period = period.strip().lower()
 
-    # Check if period is empty
+    # Check if the period is empty
     if not period:
         return DEFAULT_PERIOD
 
-    # Check if period is valid
+    # Check if the period is valid
     if period not in VALID_PERIODS:
         raise ValidationError(
             f"Invalid period: {period}. "
@@ -201,11 +200,11 @@ def validate_interval(interval: str) -> str:
     # Strip whitespace and convert to lowercase
     interval = interval.strip().lower()
 
-    # Check if interval is empty
+    # Check if an interval is empty
     if not interval:
         return DEFAULT_INTERVAL
 
-    # Check if interval is valid
+    # Check if an interval is valid
     if interval not in VALID_INTERVALS:
         raise ValidationError(
             f"Invalid interval: {interval}. "
@@ -215,7 +214,7 @@ def validate_interval(interval: str) -> str:
     return interval
 
 
-def validate_date(date_str: str) -> str:
+def validate_date(date_str: str) -> Optional[str]:
     """
     Validate a date string.
 
@@ -390,15 +389,15 @@ def validate_search_query(query: str) -> str:
     # Strip whitespace
     query = query.strip()
 
-    # Check if query is empty
+    # Check if a query is empty
     if not query:
         raise ValidationError("Search query cannot be empty")
 
-    # Check if query is too short
+    # Check if a query is too short
     if len(query) < 2:
         raise ValidationError("Search query must be at least 2 characters long")
 
-    # Check if query is too long
+    # Check if a query is too long
     if len(query) > 100:
         raise ValidationError("Search query cannot be longer than 100 characters")
 
@@ -407,7 +406,7 @@ def validate_search_query(query: str) -> str:
 
 # Path parameter validators for FastAPI
 
-def TickerPath(description: str = "Stock ticker symbol", example: str = DEFAULT_TICKER) -> Any:
+def ticker_path(description: str = "Stock ticker symbol", example: str = DEFAULT_TICKER) -> Any:
     """
     Path parameter validator for ticker symbols.
 
@@ -421,7 +420,7 @@ def TickerPath(description: str = "Stock ticker symbol", example: str = DEFAULT_
     return Path(..., description=description, example=example)
 
 
-def MarketPath(description: str = "Market identifier", example: str = DEFAULT_MARKET) -> Any:
+def market_path(description: str = "Market identifier", example: str = DEFAULT_MARKET) -> Any:
     """
     Path parameter validator for market identifiers.
 
@@ -435,7 +434,7 @@ def MarketPath(description: str = "Market identifier", example: str = DEFAULT_MA
     return Path(..., description=description, example=example)
 
 
-def SectorPath(description: str = "Sector identifier", example: str = DEFAULT_SECTOR) -> Any:
+def sector_path(description: str = "Sector identifier", example: str = DEFAULT_SECTOR) -> Any:
     """
     Path parameter validator for sector identifiers.
 
@@ -449,7 +448,7 @@ def SectorPath(description: str = "Sector identifier", example: str = DEFAULT_SE
     return Path(..., description=description, example=example)
 
 
-def IndustryPath(description: str = "Industry identifier", example: str = DEFAULT_INDUSTRY) -> Any:
+def industry_path(description: str = "Industry identifier", example: str = DEFAULT_INDUSTRY) -> Any:
     """
     Path parameter validator for industry identifiers.
 
@@ -463,7 +462,7 @@ def IndustryPath(description: str = "Industry identifier", example: str = DEFAUL
     return Path(..., description=description, example=example)
 
 
-def QuerySearch(description: str = "Search query", example: str = "Apple") -> Any:
+def query_search(description: str = "Search query", example: str = "Apple") -> Any:
     """
     Path parameter validator for search queries.
 
@@ -479,7 +478,7 @@ def QuerySearch(description: str = "Search query", example: str = "Apple") -> An
 
 # Query parameter validators for FastAPI
 
-def PeriodQuery(
+def period_query(
         description: str = "Time period to download",
         default: str = DEFAULT_PERIOD
 ) -> Any:
@@ -499,7 +498,7 @@ def PeriodQuery(
     )
 
 
-def IntervalQuery(
+def interval_query(
         description: str = "Data interval",
         default: str = DEFAULT_INTERVAL
 ) -> Any:
@@ -519,8 +518,7 @@ def IntervalQuery(
     )
 
 
-def DateQuery(
-        name: str,
+def date_query(
         description: str,
         required: bool = False
 ) -> Any:
@@ -528,7 +526,6 @@ def DateQuery(
     Query parameter validator for date strings.
 
     Args:
-        name: Parameter name
         description: Parameter description
         required: Whether the parameter is required
 
@@ -547,7 +544,7 @@ def DateQuery(
         )
 
 
-def FormatQuery(
+def format_query(
         description: str = "Response format",
         default: str = "default"
 ) -> Any:

@@ -9,11 +9,9 @@ import argparse
 import importlib
 import inspect
 import logging
-import os
-import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any
+from typing import List, Optional
 
 # Configure logging
 logging.basicConfig(
@@ -53,7 +51,7 @@ def generate_endpoint_docs(
     endpoint_docs_dir = output_dir / "endpoints"
     endpoint_docs_dir.mkdir(parents=True, exist_ok=True)
 
-    # Create index file
+    # Create an index file
     index_file = endpoint_docs_dir / "README.md"
     with open(index_file, "w") as f:
         f.write("# API Endpoints\n\n")
@@ -77,14 +75,14 @@ def generate_endpoint_docs(
         type_docs_dir = endpoint_docs_dir / endpoint_type
         type_docs_dir.mkdir(exist_ok=True)
 
-        # Create endpoint type index file
+        # Create an endpoint type index file
         type_index_file = type_docs_dir / "README.md"
         with open(type_index_file, "w") as f:
             f.write(f"# {endpoint_type.capitalize()} Endpoints\n\n")
             f.write(f"This documentation covers the available {endpoint_type} endpoints in the YFinance API.\n\n")
             f.write("## Available Endpoints\n\n")
 
-        # Add to main index
+        # Add to the main index
         with open(index_file, "a") as f:
             f.write(f"- [{endpoint_type.capitalize()} Endpoints]({endpoint_type}/README.md)\n")
 
@@ -162,7 +160,7 @@ def generate_endpoint_doc(module, endpoint_type: str, endpoint_name: str) -> str
         doc += f"## {', '.join(methods)} `{path}`\n\n"
         doc += f"{func_doc}\n\n"
 
-        # Add response model if available
+        # Add a response model if available
         if response_model:
             doc += f"**Response Model:** `{response_model.__name__}`\n\n"
 
@@ -225,7 +223,7 @@ def generate_model_docs(app_dir: Path, output_dir: Path) -> None:
     model_docs_dir = output_dir / "models"
     model_docs_dir.mkdir(parents=True, exist_ok=True)
 
-    # Create index file
+    # Create an index file
     index_file = model_docs_dir / "README.md"
     with open(index_file, "w") as f:
         f.write("# API Models\n\n")
@@ -357,7 +355,7 @@ def generate_service_docs(app_dir: Path, output_dir: Path) -> None:
     service_docs_dir = output_dir / "services"
     service_docs_dir.mkdir(parents=True, exist_ok=True)
 
-    # Create index file
+    # Create an index file
     index_file = service_docs_dir / "README.md"
     with open(index_file, "w") as f:
         f.write("# API Services\n\n")
@@ -463,14 +461,14 @@ def generate_service_doc(module, service_name: str) -> str:
 
 def generate_index(output_dir: Path) -> None:
     """
-    Generate main index file.
+    Generate the main index file.
 
     Args:
         output_dir: Output directory
     """
     logger.info("Generating main index...")
 
-    # Create index file
+    # Create an index file
     index_file = output_dir / "README.md"
     with open(index_file, "w") as f:
         f.write("# YFinance API Documentation\n\n")

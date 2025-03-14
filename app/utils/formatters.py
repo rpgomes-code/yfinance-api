@@ -5,9 +5,9 @@ including formatting dates, numbers, and structured data.
 """
 import logging
 import json
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from decimal import Decimal
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Union, Hashable
 
 import pandas as pd
 import numpy as np
@@ -39,7 +39,7 @@ def format_response(
 
     # Basic metadata
     response_metadata = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
     # Add data count for lists
@@ -243,7 +243,8 @@ def format_ticker_holders(holders: pd.DataFrame) -> List[Dict[str, Any]]:
     return formatted_holders
 
 
-def format_ticker_financials(financials: pd.DataFrame) -> Dict[str, Any]:
+def format_ticker_financials(financials: pd.DataFrame) -> Union[
+    dict[Any, Any], dict[Hashable, list[dict[str, Union[Union[float, int, None, str], Any]]]]]:
     """
     Format ticker financials for API response.
 
@@ -263,7 +264,7 @@ def format_ticker_financials(financials: pd.DataFrame) -> Dict[str, Any]:
     formatted_financials = {}
 
     for metric, row in financials.iterrows():
-        # Create array of values for each period
+        # Create an array of values for each period
         values = []
 
         for period, value in zip(periods, row):
@@ -378,12 +379,10 @@ def format_market_status(status: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: Formatted market status
     """
-    formatted_status = {}
+    formatted_status = {"market": status.get('market'), "region": status.get('region'),
+                        "is_open": status.get('is_open', False)}
 
     # Basic market info
-    formatted_status["market"] = status.get('market')
-    formatted_status["region"] = status.get('region')
-    formatted_status["is_open"] = status.get('is_open', False)
 
     # Trading hours
     if 'trading_hours' in status:
@@ -404,7 +403,7 @@ def format_market_status(status: Dict[str, Any]) -> Dict[str, Any]:
         }
 
     # Current time
-    formatted_status["current_time"] = format_datetime(datetime.utcnow())
+    formatted_status["current_time"] = format_datetime(datetime.now(timezone.utc))
 
     # Market timezone
     formatted_status["timezone"] = status.get('timezone')
@@ -467,7 +466,7 @@ def json_encoder(obj: Any) -> Any:
         obj: Object to encode
 
     Returns:
-        Any: JSON encodable representation of object
+        Any: JSON encodable representation of an object
     """
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
