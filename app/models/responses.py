@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, Generic, List, Optional, TypeVar
 
 from pydantic import BaseModel, Field
-from pydantic.generics import GenericModel
+from pydantic.v1.generics import GenericModel
 
 from app.models.common import Metadata, Pagination
 from app.models.industry import (

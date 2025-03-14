@@ -98,8 +98,9 @@ class SearchQuery(BaseModel):
         description="Result types to include (quotes, news, lists, research)"
     )
 
+    @classmethod
     @field_validator('types', check_fields=True)
-    def validate_types(self, v):
+    def validate_types(cls, v):
         """Validate search result types."""
         valid_types = {'quotes', 'news', 'lists', 'research'}
         if v.lower() not in valid_types:

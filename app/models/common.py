@@ -7,7 +7,7 @@ from datetime import date, datetime
 from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
 
 from pydantic import BaseModel, Field, field_validator
-from pydantic.generics import GenericModel
+from pydantic.v1.generics import GenericModel
 
 from app.models.enums import (
     DataInterval,
@@ -32,8 +32,9 @@ class DateRange(BaseModel):
         description="End date (ISO format or YYYY-MM-DD)"
     )
 
+    @classmethod
     @field_validator('start', 'end', mode='before')
-    def validate_date(self, v):
+    def validate_date(cls, v):
         """Validate and convert date strings."""
         if v is None:
             return None
