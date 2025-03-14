@@ -14,14 +14,14 @@ from app.models.enums import QuoteType
 class SearchResultBase(BaseModel):
     """Base model for search results."""
 
-    type: str = Field(..., description="Result type")
+    result_type: str = Field(..., description="Result type", alias="type")
     score: Optional[float] = Field(None, description="Relevance score")
 
 
 class QuoteSearchResult(SearchResultBase):
     """Model for quote search results."""
 
-    type: str = Field("quote", const=True, description="Result type")
+    result_type: str = Field("quote", const=True, description="Result type", alias="type")
     symbol: str = Field(..., description="Ticker symbol")
     name: str = Field(..., description="Company or instrument name")
     exchange: Optional[str] = Field(None, description="Exchange")
@@ -35,7 +35,7 @@ class QuoteSearchResult(SearchResultBase):
 class NewsSearchResult(SearchResultBase):
     """Model for news search results."""
 
-    type: str = Field("news", const=True, description="Result type")
+    result_type: str = Field("news", const=True, description="Result type", alias="type")
     title: str = Field(..., description="News title")
     publisher: str = Field(..., description="News publisher")
     published_at: datetime = Field(..., description="Publish date and time")
@@ -49,7 +49,7 @@ class NewsSearchResult(SearchResultBase):
 class ListSearchResult(SearchResultBase):
     """Model for list search results."""
 
-    type: str = Field("list", const=True, description="Result type")
+    result_type: str = Field("list", const=True, description="Result type", alias="type")
     name: str = Field(..., description="List name")
     description: Optional[str] = Field(None, description="List description")
     symbols: List[str] = Field(..., description="Ticker symbols in the list")
@@ -59,7 +59,7 @@ class ListSearchResult(SearchResultBase):
 class ResearchReportSearchResult(SearchResultBase):
     """Model for research report search results."""
 
-    type: str = Field("research", const=True, description="Result type")
+    result_type: str = Field("research", const=True, description="Result type", alias="type")
     title: str = Field(..., description="Report title")
     publisher: str = Field(..., description="Report publisher")
     published_at: datetime = Field(..., description="Publish date and time")
