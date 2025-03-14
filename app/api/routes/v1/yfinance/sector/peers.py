@@ -1,13 +1,11 @@
 """Sector peers endpoint for YFinance API."""
 from typing import List, Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_sector_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_sector_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_sector_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_week
 
@@ -28,8 +26,7 @@ router = create_sector_router()
 @response_formatter()
 async def get_sector_peers(
         sector_obj=Depends(get_sector_object),
-        limit: int = Query(5, ge=1, le=10, description="Maximum number of peer sectors to return"),
-        query_params: QueryParams = Depends(get_query_params)
+        limit: int = Query(5, ge=1, le=10, description="Maximum number of peer sectors to return")
 ):
     """
     Get peer sectors for a sector.
@@ -37,7 +34,6 @@ async def get_sector_peers(
     Args:
         sector_obj: YFinance Sector object
         limit: Maximum number of peers to return
-        query_params: Query parameters
 
     Returns:
         List[Dict[str, Any]]: List of peer sectors
@@ -149,12 +145,12 @@ async def get_sector_peers(
     # Get peer sectors
     peers = sector_relationships.get(standardized_sector, [])
 
-    # Limit number of peers
+    # Limit the number of peers
     peers = peers[:limit]
 
-    # Add sector key for each peer
+    # Add a sector key for each peer
     for peer in peers:
-        # Convert spaces to underscores and lowercase for key
+        # Convert spaces to underscores and lowercase for a key
         peer["key"] = peer["name"].lower().replace(" ", "_")
 
     # Return peer sectors

@@ -1,10 +1,7 @@
 """History endpoint for YFinance API."""
 from typing import Dict, Any, Optional
 
-from fastapi import Path, Query, Depends
-from app.models.common import HistoryParams
-from app.models.responses import TickerHistoryResponse
-
+from fastapi import Path, Query
 from app.api.routes.v1.yfinance.base import create_ticker_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
@@ -45,7 +42,7 @@ async def get_ticker_history(
         interval: Data interval
         start: Start date
         end: End date
-        prepost: Include pre and post market data
+        prepost: Include pre- and post-market data
         actions: Include dividends and stock splits
         auto_adjust: Adjust all OHLC automatically
 
@@ -63,7 +60,7 @@ async def get_ticker_history(
         "auto_adjust": auto_adjust
     }
 
-    # If start and end are provided, use them instead of period
+    # If start and end are provided, use them instead of a period
     if start or end:
         if start:
             history_params["start"] = start
@@ -92,7 +89,7 @@ async def get_ticker_history(
     }
 
     if not history.empty:
-        # Convert to list of records
+        # Convert to a list of records
         for date, row in history.iterrows():
             data_point = {
                 "date": date.strftime("%Y-%m-%d"),

@@ -1,13 +1,11 @@
 """Sector performance endpoint for YFinance API."""
 from typing import Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import DataResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_sector_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_sector_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_sector_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_day
 from app.services.yfinance_service import YFinanceService
@@ -29,8 +27,7 @@ router = create_sector_router()
 @response_formatter()
 async def get_sector_performance(
         sector_obj=Depends(get_sector_object),
-        period: str = Query("1y", description="Performance period (1d, 5d, 1mo, 3mo, 6mo, 1y, 5y, max)"),
-        query_params: QueryParams = Depends(get_query_params)
+        period: str = Query("1y", description="Performance period (1d, 5d, 1mo, 3mo, 6mo, 1y, 5y, max)")
 ):
     """
     Get detailed performance metrics for a sector.
@@ -38,7 +35,6 @@ async def get_sector_performance(
     Args:
         sector_obj: YFinance Sector object
         period: Performance period
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Performance metrics for the sector
@@ -48,12 +44,7 @@ async def get_sector_performance(
 
     # Get sector overview to extract key information
     overview = sector_obj.overview or {}
-    performance = {}
-
-    # Basic sector info
-    performance["key"] = sector_obj.key
-    performance["name"] = sector_obj.name
-    performance["symbol"] = sector_obj.symbol
+    performance = {"key": sector_obj.key, "name": sector_obj.name, "symbol": sector_obj.symbol}
 
     # Extract performance from overview if available
     if "performance" in overview:
@@ -77,7 +68,7 @@ async def get_sector_performance(
 
     if sector_symbol:
         try:
-            # Get historical data for specified period
+            # Get historical data for a specified period
             history = yfinance_service.get_ticker_history(sector_symbol, period=period, interval="1d")
 
             if not history.empty:

@@ -1,9 +1,6 @@
 """News endpoint for YFinance API."""
-from typing import List, Optional
-
-from fastapi import Path, Query
+from typing import List
 from app.models.ticker import NewsItem
-from app.models.responses import TickerNewsResponse
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
@@ -23,16 +20,9 @@ router = create_ticker_router()
     invalidate_at_midnight=True,
     attribute_name="news"
 )
-async def get_ticker_news(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL"),
-        limit: Optional[int] = Query(None, ge=1, le=100, description="Maximum number of news items to return")
-):
+async def get_ticker_news():
     """
     Get recent news for a ticker.
-
-    Args:
-        ticker: The stock ticker symbol
-        limit: Maximum number of news items to return
 
     Returns:
         List[NewsItem]: List of news articles

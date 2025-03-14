@@ -1,14 +1,11 @@
 """Sector historical data endpoint for YFinance API."""
-from typing import List, Dict, Any, Optional
-from datetime import datetime, timedelta
+from typing import Dict, Any, Optional
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_sector_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_sector_object, get_query_params
-from app.models.common import QueryParams, HistoryParams
+from app.api.dependencies import get_sector_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_day
 from app.services.yfinance_service import YFinanceService
@@ -37,8 +34,7 @@ async def get_sector_historical(
         start: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
         end: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
         include_companies: bool = Query(False, description="Include performance data for top companies in the sector"),
-        company_limit: int = Query(5, ge=1, le=20, description="Number of top companies to include"),
-        query_params: QueryParams = Depends(get_query_params)
+        company_limit: int = Query(5, ge=1, le=20, description="Number of top companies to include")
 ):
     """
     Get historical performance data for a sector.
@@ -51,7 +47,6 @@ async def get_sector_historical(
         end: End date
         include_companies: Whether to include data for top companies
         company_limit: Number of top companies to include
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Historical data for the sector

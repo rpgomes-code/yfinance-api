@@ -1,9 +1,7 @@
 """Cash flow endpoint for YFinance API."""
 from typing import List
 
-from fastapi import Path
 from app.models.ticker import FinancialStatement
-from app.models.responses import TickerCashFlowResponse
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
@@ -24,13 +22,9 @@ router = create_ticker_router()
     attribute_name="cash_flow"
 )
 async def get_ticker_cash_flow(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL")
 ):
     """
     Get the cash flow statement for a ticker.
-
-    Args:
-        ticker: The stock ticker symbol
 
     Returns:
         List[FinancialStatement]: Cash flow statements

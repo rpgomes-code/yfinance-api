@@ -4,12 +4,10 @@ This module provides common functionality and factory functions for creating
 YFinance route endpoints, reducing duplication across endpoint modules.
 """
 import functools
-import inspect
 import logging
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import Callable, Optional, TypeVar
 
-from fastapi import APIRouter, Depends, Path, Query
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends
 
 from app.core.cache import (
     cache_30_minutes,
@@ -22,14 +20,12 @@ from app.core.constants import (
     ENDPOINT_CACHE_DURATIONS,
     INVALIDATE_AT_MIDNIGHT
 )
-from app.models.common import QueryParams
 from app.api.dependencies import (
     get_ticker_object,
     get_market_object,
     get_search_object,
     get_sector_object,
-    get_industry_object,
-    get_query_params
+    get_industry_object
 )
 from app.services.yfinance_service import YFinanceService
 from app.utils.decorators import (
@@ -130,29 +126,15 @@ def get_cache_decorator(
         return cache_1_day(invalidate_at_midnight=invalidate_at_midnight)
 
 def ticker_endpoint(
-    path: str,
-    response_model: Optional[Type[ResponseModel]] = None,
-    summary: str = "",
-    description: str = "",
-    cache_duration: str = "1_day",
     attribute_name: Optional[str] = None,
-    invalidate_at_midnight: bool = True,
-    additional_responses: Optional[Dict] = None,
-    dependencies: Optional[List] = None,
+    invalidate_at_midnight: bool = True
 ) -> Callable:
     """
     Factory function to create a standard ticker endpoint.
 
     Args:
-        path: Endpoint path
-        response_model: Response model
-        summary: Endpoint summary
-        description: Endpoint description
-        cache_duration: Cache duration
         attribute_name: YFinance attribute name
         invalidate_at_midnight: Whether to invalidate cache at midnight
-        additional_responses: Additional response definitions
-        dependencies: Additional dependencies
 
     Returns:
         Callable: Decorator function for endpoint
@@ -179,15 +161,13 @@ def ticker_endpoint(
         if attribute_name:
             @functools.wraps(func)
             async def implementation(
-                ticker_obj = Depends(get_ticker_object),
-                query_params: QueryParams = Depends(get_query_params)
+                ticker_obj = Depends(get_ticker_object)
             ):
                 """
                 Standard implementation for ticker endpoints.
 
                 Args:
                     ticker_obj: YFinance Ticker object
-                    query_params: Query parameters
 
                 Returns:
                     Any: Ticker attribute data
@@ -204,25 +184,15 @@ def ticker_endpoint(
     return decorator
 
 def market_endpoint(
-    path: str,
-    response_model: Optional[Type[ResponseModel]] = None,
-    summary: str = "",
-    description: str = "",
     cache_duration: str = "30_minutes",
     attribute_name: Optional[str] = None,
-    dependencies: Optional[List] = None,
 ) -> Callable:
     """
     Factory function to create a standard market endpoint.
 
     Args:
-        path: Endpoint path
-        response_model: Response model
-        summary: Endpoint summary
-        description: Endpoint description
         cache_duration: Cache duration
         attribute_name: YFinance attribute name
-        dependencies: Additional dependencies
 
     Returns:
         Callable: Decorator function for endpoint
@@ -251,14 +221,12 @@ def market_endpoint(
             @functools.wraps(func)
             async def implementation(
                 market_obj = Depends(get_market_object),
-                query_params: QueryParams = Depends(get_query_params)
             ):
                 """
                 Standard implementation for market endpoints.
 
                 Args:
                     market_obj: YFinance Market object
-                    query_params: Query parameters
 
                 Returns:
                     Any: Market attribute data
@@ -275,25 +243,15 @@ def market_endpoint(
     return decorator
 
 def search_endpoint(
-    path: str,
-    response_model: Optional[Type[ResponseModel]] = None,
-    summary: str = "",
-    description: str = "",
     cache_duration: str = "30_minutes",
     attribute_name: Optional[str] = None,
-    dependencies: Optional[List] = None,
 ) -> Callable:
     """
     Factory function to create a standard search endpoint.
 
     Args:
-        path: Endpoint path
-        response_model: Response model
-        summary: Endpoint summary
-        description: Endpoint description
         cache_duration: Cache duration
         attribute_name: YFinance attribute name
-        dependencies: Additional dependencies
 
     Returns:
         Callable: Decorator function for endpoint
@@ -320,14 +278,12 @@ def search_endpoint(
             @functools.wraps(func)
             async def implementation(
                 search_obj = Depends(get_search_object),
-                query_params: QueryParams = Depends(get_query_params)
             ):
                 """
                 Standard implementation for search endpoints.
 
                 Args:
                     search_obj: YFinance Search object
-                    query_params: Query parameters
 
                 Returns:
                     Any: Search attribute data
@@ -344,25 +300,15 @@ def search_endpoint(
     return decorator
 
 def sector_endpoint(
-    path: str,
-    response_model: Optional[Type[ResponseModel]] = None,
-    summary: str = "",
-    description: str = "",
     cache_duration: str = "1_week",
     attribute_name: Optional[str] = None,
-    dependencies: Optional[List] = None,
 ) -> Callable:
     """
     Factory function to create a standard sector endpoint.
 
     Args:
-        path: Endpoint path
-        response_model: Response model
-        summary: Endpoint summary
-        description: Endpoint description
         cache_duration: Cache duration
         attribute_name: YFinance attribute name
-        dependencies: Additional dependencies
 
     Returns:
         Callable: Decorator function for endpoint
@@ -393,14 +339,12 @@ def sector_endpoint(
             @functools.wraps(func)
             async def implementation(
                 sector_obj = Depends(get_sector_object),
-                query_params: QueryParams = Depends(get_query_params)
             ):
                 """
                 Standard implementation for sector endpoints.
 
                 Args:
                     sector_obj: YFinance Sector object
-                    query_params: Query parameters
 
                 Returns:
                     Any: Sector attribute data
@@ -417,25 +361,15 @@ def sector_endpoint(
     return decorator
 
 def industry_endpoint(
-    path: str,
-    response_model: Optional[Type[ResponseModel]] = None,
-    summary: str = "",
-    description: str = "",
     cache_duration: str = "1_week",
     attribute_name: Optional[str] = None,
-    dependencies: Optional[List] = None,
 ) -> Callable:
     """
     Factory function to create a standard industry endpoint.
 
     Args:
-        path: Endpoint path
-        response_model: Response model
-        summary: Endpoint summary
-        description: Endpoint description
         cache_duration: Cache duration
         attribute_name: YFinance attribute name
-        dependencies: Additional dependencies
 
     Returns:
         Callable: Decorator function for endpoint
@@ -465,15 +399,13 @@ def industry_endpoint(
         if attribute_name:
             @functools.wraps(func)
             async def implementation(
-                industry_obj = Depends(get_industry_object),
-                query_params: QueryParams = Depends(get_query_params)
+                industry_obj = Depends(get_industry_object)
             ):
                 """
                 Standard implementation for industry endpoints.
 
                 Args:
                     industry_obj: YFinance Industry object
-                    query_params: Query parameters
 
                 Returns:
                     Any: Industry attribute data

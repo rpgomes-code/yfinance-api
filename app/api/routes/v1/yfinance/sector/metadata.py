@@ -1,13 +1,11 @@
 """Sector metadata endpoint for YFinance API."""
 from typing import Dict, Any
 
-from fastapi import Path, Depends
-from app.models.responses import DataResponse
+from fastapi import Depends
 
 from app.api.routes.v1.yfinance.base import create_sector_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_sector_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_sector_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_3_months
 
@@ -28,14 +26,12 @@ router = create_sector_router()
 @response_formatter()
 async def get_sector_metadata(
         sector_obj=Depends(get_sector_object),
-        query_params: QueryParams = Depends(get_query_params)
 ):
     """
     Get metadata for a sector.
 
     Args:
         sector_obj: YFinance Sector object
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Sector metadata
@@ -112,7 +108,7 @@ async def get_sector_metadata(
                 }
             }
 
-            # Normalize sector key
+            # Normalize a sector key
             normalized_key = sector_obj.key.lower().replace("-", "_")
             if normalized_key in gics_sectors:
                 metadata["classification"] = gics_sectors[normalized_key]
@@ -174,7 +170,7 @@ def _get_sector_icon(sector_key: str) -> str:
 
 
 def _get_sector_short_name(sector_name: str) -> str:
-    """Get short name for a sector."""
+    """Get a short name for a sector."""
     if len(sector_name) <= 12:
         return sector_name
 

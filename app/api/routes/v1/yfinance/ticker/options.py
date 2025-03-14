@@ -1,8 +1,5 @@
 """Options endpoint for YFinance API."""
-from typing import List, Dict, Any
-
-from fastapi import Path
-from app.models.responses import ListResponse
+from typing import List
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
@@ -23,13 +20,9 @@ router = create_ticker_router()
     attribute_name="options"
 )
 async def get_ticker_options(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL")
 ):
     """
     Get available options expiration dates for a ticker.
-
-    Args:
-        ticker: The stock ticker symbol
 
     Returns:
         List[str]: List of options expiration dates

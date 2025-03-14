@@ -1,9 +1,7 @@
 """Analyst price targets endpoint for YFinance API."""
 from typing import List
 
-from fastapi import Path
 from app.models.ticker import AnalystPriceTarget
-from app.models.responses import TickerAnalystPriceTargetsResponse
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
@@ -24,13 +22,9 @@ router = create_ticker_router()
     attribute_name="analyst_price_targets"
 )
 async def get_ticker_analyst_price_targets(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL")
 ):
     """
     Get analyst price targets for a ticker.
-
-    Args:
-        ticker: The stock ticker symbol
 
     Returns:
         List[AnalystPriceTarget]: List of analyst price targets

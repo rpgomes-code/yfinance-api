@@ -1,14 +1,12 @@
 """Sector trends endpoint for YFinance API."""
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 import pandas as pd
-from fastapi import Path, Depends, Query
-from app.models.responses import DataResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_sector_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_sector_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_sector_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_week
 from app.services.yfinance_service import YFinanceService
@@ -30,8 +28,7 @@ router = create_sector_router()
 @response_formatter()
 async def get_sector_trends(
         sector_obj=Depends(get_sector_object),
-        period: str = Query("1y", description="Time period for trend analysis (1mo, 3mo, 6mo, 1y, 2y, 5y)"),
-        query_params: QueryParams = Depends(get_query_params)
+        period: str = Query("1y", description="Time period for trend analysis (1mo, 3mo, 6mo, 1y, 2y, 5y)")
 ):
     """
     Get trend analysis for a sector.
@@ -39,7 +36,6 @@ async def get_sector_trends(
     Args:
         sector_obj: YFinance Sector object
         period: Time period for trend analysis
-        query_params: Query parameters
 
     Returns:
         Dict[str, Any]: Sector trend analysis

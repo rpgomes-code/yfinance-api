@@ -1,13 +1,11 @@
 """Sector stocks endpoint for YFinance API."""
 from typing import List, Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_sector_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_sector_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_sector_object
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_day
 from app.services.yfinance_service import YFinanceService
@@ -35,11 +33,10 @@ async def get_sector_stocks(
         country: str = Query(None, description="Filter by country"),
         sort_by: str = Query("market_cap", description="Field to sort by (market_cap, price, change, name)"),
         order: str = Query("desc", description="Sort order (asc, desc)"),
-        limit: int = Query(100, ge=1, le=500, description="Maximum number of stocks to return"),
-        query_params: QueryParams = Depends(get_query_params)
+        limit: int = Query(100, ge=1, le=500, description="Maximum number of stocks to return")
 ):
     """
-    Get a comprehensive list of all stocks in a sector.
+    Get a comprehensive list of all stocks in the sector.
 
     Args:
         sector_obj: YFinance Sector object
@@ -50,7 +47,6 @@ async def get_sector_stocks(
         sort_by: Field to sort by
         order: Sort order
         limit: Maximum number of stocks to return
-        query_params: Query parameters
 
     Returns:
         List[Dict[str, Any]]: List of stocks in the sector
@@ -58,10 +54,10 @@ async def get_sector_stocks(
     # Create YFinance service
     yfinance_service = YFinanceService()
 
-    # First try to get top companies as a starting point
+    # First, try to get top companies as a starting point
     companies = sector_obj.top_companies or []
 
-    # Initialize stocks list
+    # Initialize a stock list
     stocks = []
 
     # Process and filter companies

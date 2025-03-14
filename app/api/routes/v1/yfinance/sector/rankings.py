@@ -1,13 +1,10 @@
 """Sector rankings endpoint for YFinance API."""
 from typing import List, Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import ListResponse
+from fastapi import Query
 
 from app.api.routes.v1.yfinance.base import create_sector_router
 from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_query_params
-from app.models.common import QueryParams
 from app.utils.decorators import performance_tracker, error_handler, response_formatter
 from app.core.cache import cache_1_day
 from app.services.yfinance_service import YFinanceService
@@ -31,8 +28,7 @@ async def get_sector_rankings(
         metric: str = Query("performance",
                             description="Ranking metric (performance, market_cap, dividend_yield, pe_ratio, volume)"),
         period: str = Query("1d", description="Time period for performance metrics (1d, 5d, 1mo, 3mo, 6mo, 1y, ytd)"),
-        order: str = Query("desc", description="Sort order (asc, desc)"),
-        query_params: QueryParams = Depends(get_query_params)
+        order: str = Query("desc", description="Sort order (asc, desc)")
 ):
     """
     Get rankings of all sectors by specified metric.
@@ -41,8 +37,6 @@ async def get_sector_rankings(
         metric: Ranking metric
         period: Time period for performance metrics
         order: Sort order
-        query_params: Query parameters
-
     Returns:
         List[Dict[str, Any]]: Ranked list of sectors
     """
@@ -112,7 +106,7 @@ async def get_sector_rankings(
 
             sectors_data.append(sector_data)
 
-        except Exception as e:
+        except Exception:
             # Skip sectors with errors
             continue
 

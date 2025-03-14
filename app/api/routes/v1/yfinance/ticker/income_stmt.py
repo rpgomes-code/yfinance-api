@@ -1,9 +1,6 @@
 """Income statement endpoint for YFinance API."""
 from typing import List
-
-from fastapi import Path
 from app.models.ticker import FinancialStatement
-from app.models.responses import TickerIncomeStatementResponse
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
@@ -24,13 +21,9 @@ router = create_ticker_router()
     attribute_name="income_stmt"
 )
 async def get_ticker_income_stmt(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL")
 ):
     """
     Get the income statement for a ticker.
-
-    Args:
-        ticker: The stock ticker symbol
 
     Returns:
         List[FinancialStatement]: Income statements

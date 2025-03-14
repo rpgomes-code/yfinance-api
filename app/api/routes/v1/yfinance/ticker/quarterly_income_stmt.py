@@ -1,9 +1,5 @@
 """Quarterly income statement endpoint for YFinance API."""
 from typing import Dict, Any
-
-from fastapi import Path
-from app.models.responses import DataResponse
-
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
 # Create router for this endpoint
@@ -23,13 +19,9 @@ router = create_ticker_router()
     attribute_name="quarterly_income_stmt"
 )
 async def get_ticker_quarterly_income_stmt(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL")
 ):
     """
     Get the quarterly income statement for a ticker.
-
-    Args:
-        ticker: The stock ticker symbol
 
     Returns:
         Dict[str, Any]: Quarterly income statement

@@ -1,9 +1,5 @@
 """Insider transactions endpoint for YFinance API."""
 from typing import List, Dict, Any
-
-from fastapi import Path
-from app.models.responses import ListResponse
-
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
 # Create router for this endpoint
@@ -23,13 +19,9 @@ router = create_ticker_router()
     attribute_name="insider_transactions"
 )
 async def get_ticker_insider_transactions(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL")
 ):
     """
     Get insider transactions for a ticker.
-
-    Args:
-        ticker: The stock ticker symbol
 
     Returns:
         List[Dict[str, Any]]: List of insider transactions

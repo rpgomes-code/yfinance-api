@@ -1,13 +1,10 @@
 """Sector top ETFs endpoint for YFinance API."""
 from typing import List, Dict, Any
 
-from fastapi import Path, Depends, Query
-from app.models.responses import SectorETFsResponse
+from fastapi import Depends, Query
 
 from app.api.routes.v1.yfinance.base import create_sector_router, sector_endpoint
-from app.utils.yfinance_data_manager import clean_yfinance_data
-from app.api.dependencies import get_sector_object, get_query_params
-from app.models.common import QueryParams
+from app.api.dependencies import get_sector_object
 
 # Create router for this endpoint
 router = create_sector_router()
@@ -26,8 +23,7 @@ router = create_sector_router()
 )
 async def get_sector_top_etfs(
         sector_obj=Depends(get_sector_object),
-        limit: int = Query(10, ge=1, le=50, description="Maximum number of ETFs to return"),
-        query_params: QueryParams = Depends(get_query_params)
+        limit: int = Query(10, ge=1, le=50, description="Maximum number of ETFs to return")
 ):
     """
     Get the top ETFs for a sector.
@@ -35,12 +31,11 @@ async def get_sector_top_etfs(
     Args:
         sector_obj: YFinance Sector object
         limit: Maximum number of ETFs to return
-        query_params: Query parameters
 
     Returns:
         List[Dict[str, Any]]: List of top ETFs in the sector
     """
-    # Get top ETFs from sector object
+    # Get top ETFs from a sector object
     etfs = sector_obj.top_etfs
 
     # Limit results if needed

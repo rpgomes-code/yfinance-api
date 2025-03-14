@@ -1,5 +1,5 @@
 """Balancesheet endpoint for YFinance API (alias for balance_sheet)."""
-from fastapi import Path
+from typing import List
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 from app.models.ticker import FinancialStatement
@@ -21,13 +21,9 @@ router = create_ticker_router()
     attribute_name="balancesheet"
 )
 async def get_ticker_balancesheet(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL")
 ):
     """
-    Get the balance sheet for a ticker (alias for balance-sheet).
-
-    Args:
-        ticker: The stock ticker symbol
+    Get the balance sheet for a ticker (alias for a balance-sheet).
 
     Returns:
         List of balance sheet statements

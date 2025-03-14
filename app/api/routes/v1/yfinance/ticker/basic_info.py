@@ -1,5 +1,4 @@
 """Basic info endpoint for YFinance API."""
-from fastapi import Path
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 from app.models.ticker import TickerBasicInfo
@@ -20,13 +19,9 @@ router = create_ticker_router()
     attribute_name="basic_info"
 )
 async def get_ticker_basic_info(
-        ticker: str = Path(..., description="Stock ticker symbol", example="AAPL")
 ):
     """
     Get basic information for a ticker.
-
-    Args:
-        ticker: The stock ticker symbol
 
     Returns:
         TickerBasicInfo: Basic ticker information
