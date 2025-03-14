@@ -17,13 +17,12 @@ class TickerAction(BaseModel):
     """Model for ticker actions (dividends and splits)."""
 
     date: datetime = Field(..., description="Date of the action")
-    action_type: ActionType = Field(..., description="Type of action", alias="type")
+    action_type: str = Field(..., description="Type of action", alias="type")
     value: float = Field(..., description="Value of the action")
 
     model_config = {
         "populate_by_name": True,
-        "arbitrary_types_allowed": True,
-        "use_enum_values": True
+        "arbitrary_types_allowed": True
     }
 
 

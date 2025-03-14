@@ -54,7 +54,12 @@ def register_package_routers(router: APIRouter, package) -> None:
         router: Parent router to add child routers to
         package: Package to scan for routers
     """
-    # Get a package path
+    # Check if package is properly imported and has __file__ attribute
+    if not hasattr(package, '__file__') or package.__file__ is None:
+        logger.warning(f"Cannot register routers from {getattr(package, '__name__', 'unknown')}: Package not properly imported")
+        return
+
+    # Get package path
     pkg_path = os.path.dirname(package.__file__)
 
     # Find all Python modules in the package

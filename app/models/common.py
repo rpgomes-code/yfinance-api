@@ -60,12 +60,12 @@ class DateRange(BaseModel):
 class HistoryParams(DateRange):
     """Model for history data parameters."""
 
-    period: Optional[DataPeriod] = Field(
+    period: Optional[str] = Field(
         None,
         description="Time period to download"
     )
-    interval: DataInterval = Field(
-        DataInterval.ONE_DAY,
+    interval: str = Field(
+        DataInterval.ONE_DAY.value,
         description="Data interval"
     )
     prepost: bool = Field(
@@ -82,7 +82,6 @@ class HistoryParams(DateRange):
     )
 
     model_config = {
-        "use_enum_values": True,
         "arbitrary_types_allowed": True
     }
 
@@ -114,14 +113,13 @@ class SortParams(BaseModel):
         None,
         description="Column to sort by"
     )
-    sort_order: SortOrder = Field(
-        SortOrder.ASC,
+    sort_order: str = Field(
+        SortOrder.ASC.value,
         description="Sort order"
     )
 
     model_config = {
         "populate_by_name": True,
-        "use_enum_values": True,
         "arbitrary_types_allowed": True
     }
 
@@ -142,15 +140,14 @@ class FilterParams(BaseModel):
 class QueryParams(PaginationParams, SortParams, FilterParams):
     """Model combining pagination, sorting, and filtering parameters."""
 
-    format_type: ResponseFormat = Field(
-        ResponseFormat.DEFAULT,
+    format_type: str = Field(
+        ResponseFormat.DEFAULT.value,
         description="Response format",
         alias="format"
     )
 
     model_config = {
         "populate_by_name": True,
-        "use_enum_values": True,
         "arbitrary_types_allowed": True
     }
 
@@ -174,7 +171,7 @@ class MetadataBase(BaseModel):
     """Base model for metadata in responses."""
 
     timestamp: datetime = Field(
-        ...,
+        default_factory=datetime.now,
         description="Timestamp of the response"
     )
 

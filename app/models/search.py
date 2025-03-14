@@ -24,7 +24,7 @@ class SearchResultBase(BaseModel):
 class QuoteSearchResult(SearchResultBase):
     """Model for quote search results."""
 
-    result_type: str = Field("quote", const=True, description="Result type", alias="type")
+    result_type: str = Field("quote", description="Result type", alias="type")
     symbol: str = Field(..., description="Ticker symbol")
     name: str = Field(..., description="Company or instrument name")
     exchange: Optional[str] = Field(None, description="Exchange")
@@ -43,7 +43,7 @@ class QuoteSearchResult(SearchResultBase):
 class NewsSearchResult(SearchResultBase):
     """Model for news search results."""
 
-    result_type: str = Field("news", const=True, description="Result type", alias="type")
+    result_type: str = Field("news", description="Result type", alias="type")
     title: str = Field(..., description="News title")
     publisher: str = Field(..., description="News publisher")
     published_at: datetime = Field(..., description="Publish date and time")
@@ -62,7 +62,7 @@ class NewsSearchResult(SearchResultBase):
 class ListSearchResult(SearchResultBase):
     """Model for list search results."""
 
-    result_type: str = Field("list", const=True, description="Result type", alias="type")
+    result_type: str = Field("list", description="Result type", alias="type")
     name: str = Field(..., description="List name")
     description: Optional[str] = Field(None, description="List description")
     symbols: List[str] = Field(..., description="Ticker symbols in the list")
@@ -77,7 +77,7 @@ class ListSearchResult(SearchResultBase):
 class ResearchReportSearchResult(SearchResultBase):
     """Model for research report search results."""
 
-    result_type: str = Field("research", const=True, description="Result type", alias="type")
+    result_type: str = Field("research", description="Result type", alias="type")
     title: str = Field(..., description="Report title")
     publisher: str = Field(..., description="Report publisher")
     published_at: datetime = Field(..., description="Publish date and time")
@@ -95,7 +95,7 @@ class ResearchReportSearchResult(SearchResultBase):
 class SearchResult(BaseModel):
     """Model for search results (union of all result types)."""
 
-    __root__: Union[
+    result: Union[
         QuoteSearchResult,
         NewsSearchResult,
         ListSearchResult,
@@ -135,10 +135,14 @@ class SearchQuery(BaseModel):
     @classmethod
     def validate_types(cls, v):
         """Validate search result types."""
+        if not v:
+            return v
+
         valid_types = {'quotes', 'news', 'lists', 'research'}
-        if v.lower() not in valid_types:
-            raise ValueError(f"Invalid type: {v}. Valid types are: {', '.join(valid_types)}")
-        return v.lower()
+        for t in v:
+            if t.lower() not in valid_types:
+                raise ValueError(f"Invalid type: {t}. Valid types are: {', '.join(valid_types)}")
+        return [t.lower() for t in v]
 
 
 class SearchResponse(BaseModel):
