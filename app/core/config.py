@@ -78,8 +78,9 @@ class Settings(BaseSettings):
     REDOC_URL: str = "/redoc"
     OPENAPI_URL: str = "/openapi.json"
 
+    @classmethod
     @field_validator("CORS_ORIGINS", mode="before")
-    def assemble_cors_origins(self, v: Union[str, List[str]]) -> List[str]:
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         """Parse CORS origins from string to list if needed."""
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
@@ -87,16 +88,18 @@ class Settings(BaseSettings):
             return v
         raise ValueError("CORS_ORIGINS should be a comma-separated string or a list")
 
+    @classmethod
     @field_validator("ENVIRONMENT")
-    def validate_environment(self, v: str) -> str:
+    def validate_environment(cls, v: str) -> str:
         """Validate environment string."""
         allowed = {"development", "testing", "staging", "production"}
         if v.lower() not in allowed:
             raise ValueError(f"ENVIRONMENT must be one of: {', '.join(allowed)}")
         return v.lower()
 
+    @classmethod
     @field_validator("LOG_LEVEL")
-    def validate_log_level(self, v: str) -> str:
+    def validate_log_level(cls, v: str) -> str:
         """Validate log level string."""
         allowed = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
         v = v.upper()
