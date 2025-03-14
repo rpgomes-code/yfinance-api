@@ -181,7 +181,7 @@ class LoggerAdapter(logging.LoggerAdapter):
         return msg, kwargs
 
 
-def get_logger(name: str, **context) -> Union[Logger, LoggerAdapter[Union[Union[Logger, LoggerAdapter[Any]], Any]]]:
+def get_logger(name: str, **context) -> Union[Logger, LoggerAdapter]:
     """
     Get a logger with context information.
 
