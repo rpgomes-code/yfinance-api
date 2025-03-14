@@ -25,7 +25,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
-async def lifespan():
+async def lifespan(app):  # Added app parameter here
     """
     Lifespan manager for FastAPI application.
 

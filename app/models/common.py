@@ -32,8 +32,8 @@ class DateRange(BaseModel):
         description="End date (ISO format or YYYY-MM-DD)"
     )
 
-    @classmethod
     @field_validator('start', 'end', mode='before')
+    @classmethod
     def validate_date(cls, v):
         """Validate and convert date strings."""
         if v is None:
