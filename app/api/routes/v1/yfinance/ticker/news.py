@@ -1,6 +1,5 @@
 """News endpoint for YFinance API."""
-from typing import List
-from app.models.ticker import NewsItem
+from typing import List, Dict, Any
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
@@ -10,7 +9,7 @@ router = create_ticker_router()
 
 @router.get(
     "/{ticker}/news",
-    response_model=List[NewsItem],
+    response_model=List[Dict[str, Any]],  # Changed from List[NewsItem]
     summary="Get News",
     description="Returns recent news articles for the specified ticker. Updated daily at midnight UTC."
 )
@@ -25,7 +24,7 @@ async def get_ticker_news():
     Get recent news for a ticker.
 
     Returns:
-        List[NewsItem]: List of news articles
+        List[Dict[str, Any]]: List of news articles
     """
     # No implementation needed - the ticker_endpoint decorator handles it
     # when attribute_name is provided

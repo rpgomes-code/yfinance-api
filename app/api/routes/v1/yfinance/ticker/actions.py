@@ -9,7 +9,7 @@ router = create_ticker_router()
 
 @router.get(
     "/{ticker}/actions",
-    response_model=List[Dict[str, Any]],
+    response_model=List[Dict[str, Any]],  # Changed from List[TickerAction]
     summary="Get Actions",
     description="Returns corporate actions (dividends and splits) for the specified ticker. Updated daily at midnight UTC."
 )
@@ -19,7 +19,8 @@ router = create_ticker_router()
     invalidate_at_midnight=True,
     attribute_name="actions"
 )
-async def get_ticker_actions():
+async def get_ticker_actions(
+):
     """
     Get corporate actions for a ticker.
 

@@ -1,6 +1,5 @@
 """Market status endpoint for YFinance API."""
-
-from app.models.responses import MarketStatusResponse
+from typing import Dict, Any
 
 from app.api.routes.v1.yfinance.base import create_market_router, market_endpoint
 
@@ -10,7 +9,7 @@ router = create_market_router()
 
 @router.get(
     "/{market}/status",
-    response_model=MarketStatusResponse,
+    response_model=Dict[str, Any],  # Changed from MarketStatusResponse
     summary="Get Market Status",
     description="Returns the current status of the specified market, including whether it's open, trading hours, and timezone information."
 )
@@ -25,7 +24,7 @@ async def get_market_status(
     Get the current status of a market.
 
     Returns:
-        MarketStatusResponse: Market status information
+        Dict[str, Any]: Market status information
     """
     # Implementation is handled by the endpoint decorator
     pass

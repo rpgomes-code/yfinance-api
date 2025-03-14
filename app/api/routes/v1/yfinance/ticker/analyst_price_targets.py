@@ -1,7 +1,5 @@
 """Analyst price targets endpoint for YFinance API."""
-from typing import List
-
-from app.models.ticker import AnalystPriceTarget
+from typing import List, Dict, Any
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
 
@@ -11,7 +9,7 @@ router = create_ticker_router()
 
 @router.get(
     "/{ticker}/analyst-price-targets",
-    response_model=List[AnalystPriceTarget],
+    response_model=List[Dict[str, Any]],  # Changed from List[AnalystPriceTarget]
     summary="Get Analyst Price Targets",
     description="Returns analyst price targets for the specified ticker. Updated daily at midnight UTC."
 )
@@ -27,7 +25,7 @@ async def get_ticker_analyst_price_targets(
     Get analyst price targets for a ticker.
 
     Returns:
-        List[AnalystPriceTarget]: List of analyst price targets
+        List[Dict[str, Any]]: List of analyst price targets
     """
     # No implementation needed - the ticker_endpoint decorator handles it
     # when attribute_name is provided

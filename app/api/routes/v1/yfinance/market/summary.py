@@ -1,6 +1,5 @@
 """Market summary endpoint for YFinance API."""
-
-from app.models.responses import MarketSummaryResponse
+from typing import Dict, Any
 
 from app.api.routes.v1.yfinance.base import create_market_router, market_endpoint
 
@@ -10,7 +9,7 @@ router = create_market_router()
 
 @router.get(
     "/{market}/summary",
-    response_model=MarketSummaryResponse,
+    response_model=Dict[str, Any],  # Changed from MarketSummaryResponse
     summary="Get Market Summary",
     description="Returns a summary of the specified market, including performance metrics, major indices, and trending securities."
 )
@@ -25,7 +24,7 @@ async def get_market_summary(
     Get a summary of the market.
 
     Returns:
-        MarketSummaryResponse: Market summary information
+        Dict[str, Any]: Market summary information
     """
     # Implementation is handled by the endpoint decorator
     pass
