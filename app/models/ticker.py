@@ -17,7 +17,7 @@ class TickerAction(BaseModel):
     """Model for ticker actions (dividends and splits)."""
 
     date: datetime = Field(..., description="Date of the action")
-    action_type: str = Field(..., description="Type of action", alias="type")
+    action_type: str = Field(..., description="Type of action")  # Removed the alias="type"
     value: float = Field(..., description="Value of the action")
 
     model_config = {

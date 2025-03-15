@@ -2,6 +2,7 @@
 from typing import List, Dict, Any
 
 from app.api.routes.v1.yfinance.base import create_ticker_router, ticker_endpoint
+from app.models.ticker import TickerAction  # Add this import
 
 # Create router for this endpoint
 router = create_ticker_router()
@@ -9,7 +10,7 @@ router = create_ticker_router()
 
 @router.get(
     "/{ticker}/actions",
-    response_model=List[Dict[str, Any]],  # Changed from List[TickerAction]
+    response_model=List[TickerAction],  # Changed back to List[TickerAction]
     summary="Get Actions",
     description="Returns corporate actions (dividends and splits) for the specified ticker. Updated daily at midnight UTC."
 )
@@ -25,7 +26,7 @@ async def get_ticker_actions(
     Get corporate actions for a ticker.
 
     Returns:
-        List[Dict[str, Any]]: List of corporate actions
+        List[TickerAction]: List of corporate actions
     """
     # No implementation needed - the ticker_endpoint decorator handles it
     # when attribute_name is provided
